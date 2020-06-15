@@ -58,6 +58,13 @@ def verify_new_patient_info(in_dict):
     return True
 
 
+def add_patient_to_db(info):
+    new_patient_dict = {"patient_id": info[0], "attending_username": info[1],
+                        "patient_age": info[2], "heart_rate": list(),
+                        "timestamp": list(), "status": ""}
+    return new_patient_dict
+
+
 @app.route("/api/new_patient", methods=["POST"])
 def post_new_patient():
     in_dict = request.get_json()
