@@ -31,12 +31,12 @@ def test_check_bad_input(data, expected):
                           ({"patient_id": 123,
                             "attending_username": "Aidan.T",
                             "patient_age": 21}, [123, "Aidan.T", 21]),
-                          ({"patient_id": "abc",
+                          ({"patient_id": "1",
                             "attending_username": "Canyon.D",
-                            "patient_age": 20}, "ERROR"),
+                            "patient_age": 20}, [1, "Canyon.D", 20]),
                           ({"patient_id": 5,
                             "attending_username": "Canyon.D",
-                            "patient_age": "a20"}, "ERROR")])
+                            "patient_age": "20"}, [5, "Canyon.D", 20])])
 def test_read_patient(data, expected):
     from heart_rate_server import read_patient
     answer = read_patient(data)
@@ -56,4 +56,27 @@ def test_read_patient(data, expected):
 def test_read_attending(data, expected):
     from heart_rate_server import read_attending
     answer = read_attending(data)
+    assert answer == expected
+
+
+@pytest.mark.parametrize("data, expected",
+                         [({"patient_id": 1,
+                            "attending_username": "Canyon.D",
+                            "patient_age": 20}, True),
+                          ({"patient_id": 123,
+                            "attending_username": "Aidan.T",
+                            "patient_age": '21'}, True),
+                          ({"patient_id": '123',
+                            "attending_username": "Aidan.T",
+                            "patient_age": 21}, True),
+                          ({"patient_id": 1,
+                            "attending_username": "Canyon.D",
+                            "age": 20}, "patient_age key not found in input"),
+                          ({"patient_id": '123',
+                            "attending_username": "Aidan.T",
+                            "patient_age": "Twenty One"},
+                           "patient_age value is not the correct type")])
+def test_verify_new_patient_info(data, expected):
+    from heart_rate_server import verify_new_patient_info
+    answer = verify_new_patient_info(data)
     assert answer == expected
