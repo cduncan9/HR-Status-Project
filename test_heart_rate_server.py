@@ -74,7 +74,8 @@ def test_read_attending(data, expected):
                             "age": 20}, "patient_age key not found in input"),
                           ({"patient_id": '123',
                             "attending_username": "Aidan.T",
-                            "patient_age": "Twenty One"}, "patient_age value is not the correct type")])
+                            "patient_age": "Twenty One"},
+                           "patient_age value is not the correct type")])
 def test_verify_new_patient_info(data, expected):
     from heart_rate_server import verify_new_patient_info
     answer = verify_new_patient_info(data)
