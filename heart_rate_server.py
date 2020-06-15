@@ -62,7 +62,7 @@ def add_patient_to_db(info):
     new_patient_dict = {"patient_id": info[0], "attending_username": info[1],
                         "patient_age": info[2], "heart_rate": list(),
                         "timestamp": list(), "status": ""}
-    return new_patient_dict
+    patient_db.append(new_patient_dict)
 
 
 @app.route("/api/new_patient", methods=["POST"])
@@ -73,6 +73,7 @@ def post_new_patient():
         return verify_input, 400
     patient_info = read_patient(in_dict)
     add_patient_to_db(patient_info)
+    print(patient_db)
     return "Patient information stored", 200
 
 
