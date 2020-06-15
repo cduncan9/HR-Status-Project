@@ -31,12 +31,12 @@ def test_check_bad_input(data, expected):
                           ({"patient_id": 123,
                             "attending_username": "Aidan.T",
                             "patient_age": 21}, [123, "Aidan.T", 21]),
-                          ({"patient_id": "abc",
+                          ({"patient_id": "1",
                             "attending_username": "Canyon.D",
-                            "patient_age": 20}, "ERROR"),
+                            "patient_age": 20}, [1, "Canyon.D", 20]),
                           ({"patient_id": 5,
                             "attending_username": "Canyon.D",
-                            "patient_age": "a20"}, "ERROR")])
+                            "patient_age": "20"}, [5, "Canyon.D", 20])])
 def test_read_patient(data, expected):
     from heart_rate_server import read_patient
     answer = read_patient(data)
