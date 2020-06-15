@@ -2,6 +2,18 @@ import pytest
 import numpy as np
 
 
+@pytest.mark.parametrize("age, hr, expected",
+                         [(1, 170, True),
+                          (2, 150, False),
+                          (18, 120, True),
+                          (5, 5, False),
+                          (9, 135, True)])
+def test_is_tachycardic(age, hr, expected):
+    from heart_rate_server import is_tachycardic
+    answer = is_tachycardic(age, hr)
+    assert answer == expected
+
+
 @pytest.mark.parametrize("data, expected",
                          [(123, False),
                           ("123", False),
