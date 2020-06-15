@@ -1,5 +1,7 @@
 from flask import Flask, jsonify, request
 
+patient_db = list()
+
 app = Flask(__name__)
 
 
@@ -54,6 +56,17 @@ def verify_new_patient_info(in_dict):
         if type(in_dict[key]) != ty and check_bad_input(in_dict[key]):
             return "{} value is not the correct type".format(key)
     return True
+
+
+@app.route("/api/new_patient", methods=["POST"])
+def post_new_patient():
+    in_dict = request.get_json()
+    verify_input = verify_new_patient_info(in_dict)
+    if verify_input is not True:
+        return verify_input, 400
+    patient_info = read_patient(in_dict)
+    add_patient_to_db(patient_info)
+    return "Patient information stored", 200
 
 
 if __name__ == '__main__':
