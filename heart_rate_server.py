@@ -1,5 +1,7 @@
 from flask import Flask, jsonify, request
 
+app = Flask(__name__)
+
 
 def is_tachycardic(age, hr):
     if 1 <= age <= 2 and hr > 151:
@@ -54,3 +56,5 @@ def verify_new_patient_info(in_dict):
     return True
 
 
+if __name__ == '__main__':
+    app.run()
