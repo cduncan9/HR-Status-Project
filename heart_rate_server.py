@@ -1,6 +1,23 @@
 from flask import Flask, jsonify, request
 
 
+def is_tachycardic(age, hr):
+    if 1 <= age <= 2 and hr > 151:
+        return True
+    elif 3 < age <= 4 and hr > 137:
+        return True
+    elif 5 < age <= 7 and hr > 133:
+        return True
+    elif 8 < age <= 11 and hr > 130:
+        return True
+    elif 12 < age <= 15 and hr > 199:
+        return True
+    elif 15 < age and hr > 100:
+        return True
+    else:
+        return False
+
+
 def check_bad_input(input):
     if type(input) == str:
         if not input.isdigit():
