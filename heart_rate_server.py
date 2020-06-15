@@ -36,10 +36,11 @@ def read_patient(in_dict):
     patient = in_dict["patient_id"]
     user = in_dict["attending_username"]
     age = in_dict["patient_age"]
-    if check_bad_input(patient) or check_bad_input(age):
-        return "ERROR"
-    else:
-        return [patient, user, age]
+    if type(patient) == str:
+        patient = int(patient)
+    if type(age) == str:
+        age = int(age)
+    return [patient, user, age]
 
 
 def verify_new_patient_info(in_dict):
@@ -53,5 +54,3 @@ def verify_new_patient_info(in_dict):
     return True
 
 
-def verify_new_attending_info(in_dict):
-    return
