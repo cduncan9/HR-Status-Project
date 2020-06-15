@@ -71,7 +71,7 @@ def test_read_attending(data, expected):
                             "patient_age": 21}, True),
                           ({"patient_id": 1,
                             "attending_username": "Canyon.D",
-                            "age": 20}, "age key not found"),
+                            "age": 20}, "patient_age key not found in input"),
                           ({"patient_id": '123',
                             "attending_username": "Aidan.T",
                             "patient_age": "Twenty One"}, "patient_age value is not the correct type")])

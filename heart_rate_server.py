@@ -43,7 +43,14 @@ def read_patient(in_dict):
 
 
 def verify_new_patient_info(in_dict):
-    return
+    expected_keys = ("patient_id", "attending_username", "patient_age")
+    expected_values = (int, str, int)
+    for key, ty in zip(expected_keys, expected_values):
+        if key not in in_dict.keys():
+            return "{} key not found in input".format(key)
+        if type(in_dict[key]) != ty and check_bad_input(in_dict[key]):
+            return "{} value is not the correct type".format(key)
+    return True
 
 
 def verify_new_attending_info(in_dict):
