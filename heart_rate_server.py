@@ -40,3 +40,11 @@ def read_patient(in_dict):
         return "ERROR"
     else:
         return [patient, user, age]
+
+
+def verify_new_patient_info(in_dict):
+    return
+
+
+def verify_new_attending_info(in_dict):
+    return

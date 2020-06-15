@@ -57,3 +57,25 @@ def test_read_attending(data, expected):
     from heart_rate_server import read_attending
     answer = read_attending(data)
     assert answer == expected
+
+
+@pytest.mark.parametrize("data, expected",
+                         [({"patient_id": 1,
+                            "attending_username": "Canyon.D",
+                            "patient_age": 20}, True),
+                          ({"patient_id": 123,
+                            "attending_username": "Aidan.T",
+                            "patient_age": '21'}, True),
+                          ({"patient_id": '123',
+                            "attending_username": "Aidan.T",
+                            "patient_age": 21}, True),
+                          ({"patient_id": 1,
+                            "attending_username": "Canyon.D",
+                            "age": 20}, "age key not found"),
+                          ({"patient_id": '123',
+                            "attending_username": "Aidan.T",
+                            "patient_age": "Twenty One"}, "patient_age value is not the correct type")])
+def test_verify_new_patient_info(data, expected):
+    from heart_rate_server import verify_new_patient_info
+    answer = verify_new_patient_info(data)
+    assert answer == expected
