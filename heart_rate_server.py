@@ -118,5 +118,9 @@ def verify_heart_rate_post(in_dict):
     return True
 
 
+def read_heart_rate_info():
+    return
+
+
 if __name__ == '__main__':
     app.run()
