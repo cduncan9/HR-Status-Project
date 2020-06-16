@@ -125,14 +125,22 @@ def current_time(time_input):
     return time_string
 
 
+def find_physician_email(patient_id):
+    return
+
+
 def send_email(hr_info, timestamp):
     # this email will make the POST request to email the physician
     server = "http://vcm-7631.vm.duke.edu:5007/hrss/send_email"
-    email_dict = {"from_email": "",
-                  "to_email": "",
-                  "subject": "",
-                  "content": ""}
-    return
+    email_content = ("Your patient with the patient_id number {} "
+                     "had a tachycardic heart rate of {}"
+                     " at the date/time {}".format(hr_info[0], hr_info[1], timestamp))
+    physician_email = find_physician_email(hr_info[0])
+    email_dict = {"from_email": "warning@hrsentinalserver.com",
+                  "to_email": physician_email,
+                  "subject": "PATIENT {} HAS TACHYCARDIA".format(hr_info[0]),
+                  "content": email_content}
+    return "Email sent to attending physician"
 
 
 def check_heart_rate(hr_info, timestamp):
