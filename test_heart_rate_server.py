@@ -202,17 +202,17 @@ def test_current_time():
 
 
 @pytest.mark.parametrize("patient_id, db, expected",
-                         [1, [{"attending_username": "Canyon.D",
-                               "attending_email": "canyon@duke.edu",
-                               "attending_phone": "919-200-8973",
-                               "patients": [1]},
-                              {"attending_username": "Aidan.T",
-                               "attending_email": "aidan@duke.edu",
-                               "attending_phone": "919-200-8973",
-                               "patients": [2]}], "canyon@duke.edu"])
+                         [(1, [{"attending_username": "Canyon.D",
+                                "attending_email": "canyon@duke.edu",
+                                "attending_phone": "919-200-8973",
+                                "patients": [1]},
+                               {"attending_username": "Aidan.T",
+                                "attending_email": "aidan@duke.edu",
+                                "attending_phone": "919-200-8973",
+                                "patients": [2]}], "canyon@duke.edu")])
 def test_find_physician_email(patient_id, db, expected):
-    from heart_rate_server import find_physician_email, patient_db
-    for patient in db:
-        patient_db.append(patient)
+    from heart_rate_server import find_physician_email, attendant_db
+    for attendant in db:
+        attendant_db.append(attendant)
     answer = find_physician_email(patient_id)
     assert answer == expected

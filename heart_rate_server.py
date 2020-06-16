@@ -126,7 +126,10 @@ def current_time(time_input):
 
 
 def find_physician_email(patient_id):
-    return
+    for attendant in attendant_db:
+        if patient_id in attendant["patients"]:
+            return attendant["attending_email"]
+    return False
 
 
 def send_email(hr_info, timestamp):
