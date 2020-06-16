@@ -52,6 +52,7 @@ def get_heart_rate():
 def get_avg_heart_rate():
     r = requests.get(server_name + "/api/heart_rate/average/3")
     print(r.text)
+    
 
 if __name__ == '__main__':
     add_new_attendant()
