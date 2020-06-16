@@ -107,8 +107,15 @@ def post_new_attending():
     return "Attendant information stored", 200
 
 
-def verify_heart_rate_post():
-    return 
+def verify_heart_rate_post(in_dict):
+    expected_keys = ("patient_id", "heart_rate")
+    expected_values = (int, int)
+    for key, ty in zip(expected_keys, expected_values):
+        if key not in in_dict.keys():
+            return "{} key not found in input".format(key)
+        if type(in_dict[key]) != ty and check_bad_input(in_dict[key]):
+            return "{} value is not the correct type".format(key)
+    return True
 
 
 if __name__ == '__main__':
