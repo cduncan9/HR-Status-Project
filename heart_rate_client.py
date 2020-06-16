@@ -10,6 +10,7 @@ def add_new_patient():
     r = requests.post(server_name+"/api/new_patient", json=new_patient)
     print(r.text)
 
+
 def add_new_attendant():
     new_attendant = {"attending_username": "Duncan.C",
                      "attending_email": "c.duncan@duke.edu",
