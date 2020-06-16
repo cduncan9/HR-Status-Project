@@ -86,6 +86,7 @@ def add_patient_to_attendant_db(info, db):
             return False
     return True
 
+
 def verify_heart_rate_post(in_dict):
     expected_keys = ("patient_id", "heart_rate")
     expected_values = (int, int)
@@ -143,7 +144,8 @@ def send_email(hr_info, timestamp):
                   "to_email": physician_email,
                   "subject": "PATIENT {} HAS TACHYCARDIA".format(hr_info[0]),
                   "content": email_content}
-    return "Email sent to attending physician"
+    r = requests.post(server, json=email_dict)
+    return r.text
 
 
 def check_heart_rate(hr_info, timestamp):
@@ -151,8 +153,8 @@ def check_heart_rate(hr_info, timestamp):
         if patient['patient_id'] == hr_info[0]:
             age = patient['patient_age']
     if is_tachycardic(age, hr_info[1]):
-        send_email(hr_info, timestamp)
-        return 'Heart rate is too high. Email sent to physician.'
+        message_sent = send_email(hr_info, timestamp)
+        return message_sent
     return True
 
 
