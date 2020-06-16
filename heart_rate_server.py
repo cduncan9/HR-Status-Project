@@ -1,4 +1,6 @@
 from flask import Flask, jsonify, request
+from datetime import datetime
+import requests
 
 patient_db = list()
 attendant_db = list()
@@ -15,7 +17,7 @@ def is_tachycardic(age, hr):
         return True
     elif 8 < age <= 11 and hr > 130:
         return True
-    elif 12 < age <= 15 and hr > 199:
+    elif 12 < age <= 15 and hr > 119:
         return True
     elif 15 < age and hr > 100:
         return True
@@ -85,6 +87,80 @@ def add_patient_to_attendant_db(info, db):
     return True
 
 
+def verify_heart_rate_post(in_dict):
+    expected_keys = ("patient_id", "heart_rate")
+    expected_values = (int, int)
+    for key, ty in zip(expected_keys, expected_values):
+        if key not in in_dict.keys():
+            return "{} key not found in input".format(key)
+        if type(in_dict[key]) != ty and check_bad_input(in_dict[key]):
+            return "{} value is not the correct type".format(key)
+    return True
+
+
+def read_heart_rate_info(in_dict):
+    patient_id = in_dict['patient_id']
+    heart_rate = in_dict['heart_rate']
+    if type(patient_id) == str:
+        patient_id = int(patient_id)
+    if type(heart_rate) == str:
+        heart_rate = int(heart_rate)
+    return [patient_id, heart_rate]
+
+
+def add_heart_rate_to_patient_db(hr_info, timestamp):
+    pat_id = hr_info[0]
+    pat_hr = hr_info[1]
+    global patient_db
+    for patient in patient_db:
+        if patient['patient_id'] == pat_id:
+            patient['heart_rate'].append(pat_hr)
+            patient['timestamp'].append(timestamp)
+            return True
+    return "Error in adding heart rate info to database"
+
+
+def current_time(time_input):
+    # How can we test this
+    time_string = datetime.strftime(time_input, "%Y-%m-%d %H:%M:%S")
+    return time_string
+
+
+def find_physician_email(patient_id):
+    for attendant in attendant_db:
+        if patient_id in attendant["patients"]:
+            return attendant["attending_email"]
+    return False
+
+
+def send_email(hr_info, timestamp):
+    # this email will make the POST request to email the physician
+    server = "http://vcm-7631.vm.duke.edu:5007/hrss/send_email"
+    email_content = ("Your patient with the patient_id number {} "
+                     "had a tachycardic heart rate of {}"
+                     " at the date/time {}".format(hr_info[0],
+                                                   hr_info[1],
+                                                   timestamp))
+    physician_email = find_physician_email(hr_info[0])
+    email_dict = {"from_email": "warning@hrsentinalserver.com",
+                  "to_email": physician_email,
+                  "subject": "PATIENT {} HAS TACHYCARDIA".format(hr_info[0]),
+                  "content": email_content}
+    r = requests.post(server, json=email_dict)
+    return "Heart rate is too high. Email sent to physician."
+
+
+def check_heart_rate(hr_info, timestamp):
+    for patient in patient_db:
+        if patient['patient_id'] == hr_info[0]:
+            age = patient['patient_age']
+    if is_tachycardic(age, hr_info[1]):
+        message_sent = send_email(hr_info, timestamp)
+        return message_sent
+    return True
+
+
+# Put all of the route functions below this line
 @app.route("/api/new_patient", methods=["POST"])
 def post_new_patient():
     in_dict = request.get_json()
@@ -96,7 +172,6 @@ def post_new_patient():
     flag = add_patient_to_attendant_db(patient_info, attendant_db)
     if flag:
         return "Attendant does not exist", 400
-    print(patient_db)
     return "Patient information stored", 200
 
 
@@ -105,6 +180,25 @@ def post_new_attending():
     in_dict = request.get_json()
     print(add_attendant_to_db(read_attending(in_dict), attendant_db))
     return "Attendant information stored", 200
+
+
+@app.route("/api/heart_rate", methods=["POST"])
+def post_heart_rate():
+    in_dict = request.get_json()
+    verify_input = verify_heart_rate_post(in_dict)
+    if verify_input is not True:
+        return verify_input, 400
+    hr_info = read_heart_rate_info(in_dict)
+    timestamp = current_time(datetime.now())
+    add_heart_rate = add_heart_rate_to_patient_db(hr_info,
+                                                  timestamp)
+    if add_heart_rate is not True:
+        return add_heart_rate, 400
+    check_tachycardic = check_heart_rate(hr_info, timestamp)
+    if check_tachycardic is not True:
+        return check_tachycardic, 200
+    return "Heart rate information is stored", 200
+
 
 if __name__ == '__main__':
     app.run()

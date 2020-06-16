@@ -1,5 +1,6 @@
 import pytest
 import numpy as np
+from datetime import datetime
 
 
 @pytest.mark.parametrize("age, hr, expected",
@@ -124,4 +125,102 @@ def test_read_attending(info, db, expected):
 def test_verify_new_patient_info(data, expected):
     from heart_rate_server import verify_new_patient_info
     answer = verify_new_patient_info(data)
+    assert answer == expected
+
+
+@pytest.mark.parametrize("data, expected",
+                         [({'patient_id': 1,
+                           'heart_rate': 100}, True),
+                          ({'patient_id': '1',
+                            'heart_rate': 100}, True),
+                          ({'patient_id': 1,
+                            'heart_rate': '100'}, True),
+                          ({'patientID': 1,
+                            'heart_rate': 100},
+                           "patient_id key not found in input"),
+                          ({'patient_id': 'One',
+                            'heart_rate': '100'},
+                           'patient_id value is not the correct type')])
+def test_verify_heart_rate_post(data, expected):
+    from heart_rate_server import verify_heart_rate_post
+    answer = verify_heart_rate_post(data)
+    assert answer == expected
+
+
+@pytest.mark.parametrize('data, expected',
+                         [({'patient_id': 1,
+                           'heart_rate': 100}, [1, 100]),
+                          ({'patient_id': '1',
+                            'heart_rate': 100}, [1, 100]),
+                          ({'patient_id': 1,
+                            'heart_rate': '100'}, [1, 100])])
+def test_read_heart_rate_info(data, expected):
+    from heart_rate_server import read_heart_rate_info
+    answer = read_heart_rate_info(data)
+    assert answer == expected
+
+
+# I dont know how to test this
+@pytest.mark.parametrize('hr_info, timestamp, db, expected',
+                         [([1, 100], '2018-03-09 11:00:36',
+                           [{"patient_id": 1,
+                             "attending_username": 'Therien.A',
+                             "patient_age": 21, "heart_rate": list(),
+                             "timestamp": list(), "status": ""}], True),
+                          ([100, 200], '2018-03-09 11:00:36',
+                           [{"patient_id": 2,
+                             "attending_username": 'Duncan.C',
+                             "patient_age": 21, "heart_rate": list(),
+                             "timestamp": list(), "status": ""}],
+                             "Error in adding heart rate info to database")])
+def test_add_heart_rate_to_patient_db(hr_info, timestamp, db, expected):
+    from heart_rate_server import add_heart_rate_to_patient_db, patient_db
+    for patient in db:
+        patient_db.append(patient)
+    answer = add_heart_rate_to_patient_db(hr_info, timestamp)
+    assert answer == expected
+
+
+@pytest.mark.parametrize("hr_info, timestamp, db, expected",
+                         [([1, 100], '2018-03-09 11:00:36',
+                           [{"patient_id": 1,
+                             "attending_username": 'Therien.A',
+                             "patient_age": 21, "heart_rate": list(),
+                             "timestamp": list(), "status": ""}], True),
+                          ([1, 200], '2018-03-09 11:00:36',
+                           [{"patient_id": 2, "attending_username": 'Duncan.C',
+                             "patient_age": 21, "heart_rate": list(),
+                             "timestamp": list(), "status": ""}],
+                           'Heart rate is too high. Email sent to physician.')
+                          ])
+def test_check_heart_rate(hr_info, timestamp, db, expected):
+    from heart_rate_server import check_heart_rate, patient_db
+    for patient in db:
+        patient_db.append(patient)
+    answer = check_heart_rate(hr_info, timestamp)
+    assert answer == expected
+
+
+def test_current_time():
+    from heart_rate_server import current_time
+    time_input = datetime(2018, 3, 9, 11, 0, 36)
+    answer = current_time(time_input)
+    expected = '2018-03-09 11:00:36'
+    assert answer == expected
+
+
+@pytest.mark.parametrize("patient_id, db, expected",
+                         [(1, [{"attending_username": "Canyon.D",
+                                "attending_email": "canyon@duke.edu",
+                                "attending_phone": "919-200-8973",
+                                "patients": [1]},
+                               {"attending_username": "Aidan.T",
+                                "attending_email": "aidan@duke.edu",
+                                "attending_phone": "919-200-8973",
+                                "patients": [2]}], "canyon@duke.edu")])
+def test_find_physician_email(patient_id, db, expected):
+    from heart_rate_server import find_physician_email, attendant_db
+    for attendant in db:
+        attendant_db.append(attendant)
+    answer = find_physician_email(patient_id)
     assert answer == expected
