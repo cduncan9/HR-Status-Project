@@ -107,7 +107,13 @@ def read_heart_rate_info(in_dict):
 
 
 def add_heart_rate_to_patient_db(hr_info, timestamp, db):
-    return True
+    pat_id = hr_info[0]
+    pat_hr = hr_info[1]
+    for patient in db:
+        if patient['patient_id'] == pat_id:
+            patient['heart_rate'].append(pat_hr)
+            patient['timestamp'].append(timestamp)
+    return db
 
 
 def current_time():
