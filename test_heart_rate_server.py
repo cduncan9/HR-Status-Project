@@ -175,11 +175,19 @@ def test_add_heart_rate_to_patient_db(hr_info, timestamp, db, expected):
     assert answer == expected
 
 
-# @pytest.mark.parametrize("hr_info, timestamp, expected",
-#                          [([1, 100], '2018-03-09 11:00:36', True),
-#                           ([1, 200], '2018-03-09 11:00:36',
-#                            'Heart rate is too high. Email sent to physician.')])
-# def test_check_heart_rate(hr_info, timestamp, expected):
-#     from heart_rate_server import check_heart_rate
-#     answer = check_heart_rate(hr_info, timestamp)
-#     assert answer == expected
+@pytest.mark.parametrize("hr_info, timestamp, db, expected",
+                         [([1, 100], '2018-03-09 11:00:36',
+                           [{"patient_id": 1, "attending_username": 'Therien.A',
+                             "patient_age": 21, "heart_rate": list(),
+                             "timestamp": list(), "status": ""}], True),
+                          ([1, 200], '2018-03-09 11:00:36',
+                           [{"patient_id": 2, "attending_username": 'Duncan.C',
+                             "patient_age": 21, "heart_rate": list(),
+                             "timestamp": list(), "status": ""}],
+                           'Heart rate is too high. Email sent to physician.')])
+def test_check_heart_rate(hr_info, timestamp, db, expected):
+    from heart_rate_server import check_heart_rate, patient_db
+    for patient in db:
+        patient_db.append(patient)
+    answer = check_heart_rate(hr_info, timestamp)
+    assert answer == expected
