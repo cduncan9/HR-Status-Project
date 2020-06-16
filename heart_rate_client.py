@@ -11,12 +11,10 @@ def add_new_patient():
     print(r.text)
 
 
-
 def add_heart_rate():
     new_heart_rate = {"patient_id": 1, "heart_rate": 100}
     r = requests.post(server_name+"/api/heart_rate", json=new_heart_rate)
     print(r.text)
-
 
 
 def add_new_attendant():
