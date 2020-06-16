@@ -112,7 +112,7 @@ def add_heart_rate_to_patient_db(hr_info, timestamp, db):
 
 def current_time():
     time = datetime.now()
-    time_string = datetime.strftime(time, "%y-%m-%d %H:%M:%S")
+    time_string = datetime.strftime(time, "%Y-%m-%d %H:%M:%S")
     return time_string
 
 
@@ -152,7 +152,6 @@ def post_heart_rate():
     if add_heart_rate is not True:
         return add_heart_rate, 400
     return "Heart rate information is stored", 200
-
 
 
 if __name__ == '__main__':

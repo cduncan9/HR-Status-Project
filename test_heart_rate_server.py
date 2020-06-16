@@ -155,3 +155,27 @@ def test_read_heart_rate_info(data, expected):
     from heart_rate_server import read_heart_rate_info
     answer = read_heart_rate_info(data)
     assert answer == expected
+
+
+@pytest.mark.parametrize('hr_info, timestamp, patient_db, expected',
+                         [([1, 100], '2018-03-09 11:00:36',
+                           {"patient_id": 1, "attending_username": 'Therien.A',
+                            "patient_age": 21, "heart_rate": list(),
+                            "timestamp": list(), "status": ""},
+                            {"patient_id": 1, "attending_username": 'Therien.A',
+                             "patient_age": 21, "heart_rate": [100],
+                             "timestamp": ['2018-03-09 11:00:36'],
+                             "status": "not tachycardic"}),
+                          ([2, 200], '2018-03-09 11:00:36',
+                           {"patient_id": 2, "attending_username": 'Duncan.C',
+                            "patient_age": 21, "heart_rate": list(),
+                            "timestamp": list(), "status": ""},
+                           {"patient_id": 2, "attending_username": 'Duncan.C',
+                            "patient_age": 21, "heart_rate": [200],
+                            "timestamp": ['2018-03-09 11:00:36'],
+                            "status": "tachycardic"})
+                          ])
+def test_add_heart_rate_to_patient_db(hr_info, timestamp, patient_db, expected):
+    from heart_rate_server import add_heart_rate_to_patient_db
+    answer = add_heart_rate_to_patient_db(hr_info, timestamp, patient_db)
+    assert answer == expected
