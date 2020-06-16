@@ -201,6 +201,21 @@ def test_check_heart_rate(hr_info, timestamp, db, expected):
     assert answer == expected
 
 
+def test_get_patient_heart_rates():
+    from heart_rate_server import get_patient_heart_rates
+    db = [{"patient_id": 1,
+           "attending_username": 'Therien.A',
+           "patient_age": 21, "heart_rate": [120],
+           "timestamp": list(), "status": ""},
+          {"patient_id": 1,
+           "attending_username": 'Therien.A',
+           "patient_age": 21, "heart_rate": [100],
+           "timestamp": list(), "status": ""}]
+    answer = get_patient_heart_rates("1", db)
+    expected = [100]
+    assert answer == expected
+
+
 def test_current_time():
     from heart_rate_server import current_time
     time_input = datetime(2018, 3, 9, 11, 0, 36)
