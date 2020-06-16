@@ -106,8 +106,14 @@ def read_heart_rate_info(in_dict):
     return [patient_id, heart_rate]
 
 
-def add_heart_rate_to_patient_db(hr_info, timestamp):
-    return
+def add_heart_rate_to_patient_db(hr_info, timestamp, db):
+    return True
+
+
+def current_time():
+    time = datetime.now()
+    time_string = datetime.strftime(time, "%y-%m-%d %H:%M:%S")
+    return time_string
 
 
 # Put all of the route functions below this line
@@ -139,8 +145,10 @@ def post_heart_rate():
     if verify_input is not True:
         return verify_input, 400
     hr_info = read_heart_rate_info(in_dict)
-    timestamp = datetime.now()
-    add_heart_rate = add_heart_rate_to_patient_db(hr_info, timestamp)
+    timestamp = current_time()
+    add_heart_rate = add_heart_rate_to_patient_db(hr_info,
+                                                  timestamp,
+                                                  patient_db)
     if add_heart_rate is not True:
         return add_heart_rate, 400
     return "Heart rate information is stored", 200
