@@ -162,15 +162,15 @@ def test_read_heart_rate_info(data, expected):
                            [{"patient_id": 1, "attending_username": 'Therien.A',
                              "patient_age": 21, "heart_rate": list(),
                              "timestamp": list(), "status": ""}], True),
-                          ([2, 200], '2018-03-09 11:00:36',
+                          ([100, 200], '2018-03-09 11:00:36',
                            [{"patient_id": 2, "attending_username": 'Duncan.C',
                              "patient_age": 21, "heart_rate": list(),
-                             "timestamp": list(), "status": ""}], True)
-                          ])
+                             "timestamp": list(), "status": ""}],
+                             "Error in adding heart rate info to database")])
 def test_add_heart_rate_to_patient_db(hr_info, timestamp, db, expected):
     from heart_rate_server import add_heart_rate_to_patient_db, patient_db
-    global patient_db
-    patient_db = db
+    for patient in db:
+        patient_db.append(patient)
     answer = add_heart_rate_to_patient_db(hr_info, timestamp)
     assert answer == expected
 
