@@ -199,7 +199,8 @@ def test_add_heart_rate_to_patient_db(hr_info, timestamp, db, expected):
                              "attending_email": "canyon@duke.edu",
                              "attending_phone": "919-200-8973",
                              "patients": [20]}],
-                             'E-mail sent to canyon@duke.edu from warning@hrsentinalserver.com')
+                             'E-mail sent to canyon@duke.edu'
+                             ' from warning@hrsentinalserver.com')
                           ])
 def test_check_heart_rate(hr_info, timestamp, pat_db, att_db, expected):
     from heart_rate_server import check_heart_rate, patient_db, attendant_db

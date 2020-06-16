@@ -42,7 +42,6 @@ def add_new_attendant():
     print(r.text)
 
 
-
 if __name__ == '__main__':
     add_new_attendant()
     add_new_patient()
