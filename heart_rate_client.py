@@ -11,12 +11,24 @@ def add_new_patient():
     print(r.text)
 
 
+
 def add_heart_rate():
     new_heart_rate = {"patient_id": 1, "heart_rate": 100}
     r = requests.post(server_name+"/api/heart_rate", json=new_heart_rate)
     print(r.text)
 
 
+
+def add_new_attendant():
+    new_attendant = {"attending_username": "Duncan.C",
+                     "attending_email": "c.duncan@duke.edu",
+                     "attending_phone": "919-265-9874",
+                     "patients": list()}
+    r = requests.post(server_name+"/api/new_attending", json=new_attendant)
+    print(r.text)
+
+
 if __name__ == '__main__':
+    add_new_attendant()
     add_new_patient()
     add_heart_rate()

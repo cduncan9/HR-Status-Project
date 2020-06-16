@@ -178,7 +178,7 @@ def post_new_patient():
 @app.route("/api/new_attending", methods=["POST"])
 def post_new_attending():
     in_dict = request.get_json()
-    print(add_patient_to_db(read_attending(in_dict)))
+    print(add_attendant_to_db(read_attending(in_dict), attendant_db))
     return "Attendant information stored", 200
 
 
