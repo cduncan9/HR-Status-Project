@@ -2,6 +2,7 @@ import pytest
 import numpy as np
 from datetime import datetime
 
+
 @pytest.mark.parametrize("age, hr, expected",
                          [(1, 170, True),
                           (2, 150, False),
@@ -135,9 +136,11 @@ def test_verify_new_patient_info(data, expected):
                           ({'patient_id': 1,
                             'heart_rate': '100'}, True),
                           ({'patientID': 1,
-                            'heart_rate': 100}, "patient_id key not found in input"),
+                            'heart_rate': 100},
+                           "patient_id key not found in input"),
                           ({'patient_id': 'One',
-                            'heart_rate': '100'}, 'patient_id value is not the correct type')])
+                            'heart_rate': '100'},
+                           'patient_id value is not the correct type')])
 def test_verify_heart_rate_post(data, expected):
     from heart_rate_server import verify_heart_rate_post
     answer = verify_heart_rate_post(data)
@@ -156,14 +159,17 @@ def test_read_heart_rate_info(data, expected):
     answer = read_heart_rate_info(data)
     assert answer == expected
 
+
 # I dont know how to test this
 @pytest.mark.parametrize('hr_info, timestamp, db, expected',
                          [([1, 100], '2018-03-09 11:00:36',
-                           [{"patient_id": 1, "attending_username": 'Therien.A',
+                           [{"patient_id": 1,
+                             "attending_username": 'Therien.A',
                              "patient_age": 21, "heart_rate": list(),
                              "timestamp": list(), "status": ""}], True),
                           ([100, 200], '2018-03-09 11:00:36',
-                           [{"patient_id": 2, "attending_username": 'Duncan.C',
+                           [{"patient_id": 2,
+                             "attending_username": 'Duncan.C',
                              "patient_age": 21, "heart_rate": list(),
                              "timestamp": list(), "status": ""}],
                              "Error in adding heart rate info to database")])
@@ -177,14 +183,16 @@ def test_add_heart_rate_to_patient_db(hr_info, timestamp, db, expected):
 
 @pytest.mark.parametrize("hr_info, timestamp, db, expected",
                          [([1, 100], '2018-03-09 11:00:36',
-                           [{"patient_id": 1, "attending_username": 'Therien.A',
+                           [{"patient_id": 1,
+                             "attending_username": 'Therien.A',
                              "patient_age": 21, "heart_rate": list(),
                              "timestamp": list(), "status": ""}], True),
                           ([1, 200], '2018-03-09 11:00:36',
                            [{"patient_id": 2, "attending_username": 'Duncan.C',
                              "patient_age": 21, "heart_rate": list(),
                              "timestamp": list(), "status": ""}],
-                           'Heart rate is too high. Email sent to physician.')])
+                           'Heart rate is too high. Email sent to physician.')
+                          ])
 def test_check_heart_rate(hr_info, timestamp, db, expected):
     from heart_rate_server import check_heart_rate, patient_db
     for patient in db:

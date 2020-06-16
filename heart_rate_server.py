@@ -138,14 +138,16 @@ def send_email(hr_info, timestamp):
     server = "http://vcm-7631.vm.duke.edu:5007/hrss/send_email"
     email_content = ("Your patient with the patient_id number {} "
                      "had a tachycardic heart rate of {}"
-                     " at the date/time {}".format(hr_info[0], hr_info[1], timestamp))
+                     " at the date/time {}".format(hr_info[0],
+                                                   hr_info[1],
+                                                   timestamp))
     physician_email = find_physician_email(hr_info[0])
     email_dict = {"from_email": "warning@hrsentinalserver.com",
                   "to_email": physician_email,
                   "subject": "PATIENT {} HAS TACHYCARDIA".format(hr_info[0]),
                   "content": email_content}
     r = requests.post(server, json=email_dict)
-    return r.text
+    return "Heart rate is too high. Email sent to physician."
 
 
 def check_heart_rate(hr_info, timestamp):
