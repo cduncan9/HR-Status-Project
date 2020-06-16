@@ -106,17 +106,20 @@ def read_heart_rate_info(in_dict):
     return [patient_id, heart_rate]
 
 
-def add_heart_rate_to_patient_db(hr_info, timestamp, db):
+def add_heart_rate_to_patient_db(hr_info, timestamp):
     pat_id = hr_info[0]
     pat_hr = hr_info[1]
-    for patient in db:
+    global patient_db
+    for patient in patient_db:
         if patient['patient_id'] == pat_id:
             patient['heart_rate'].append(pat_hr)
             patient['timestamp'].append(timestamp)
-    return db
+            return True
+    return "Error in adding heart rate info to database"
 
 
 def current_time():
+    # How can we test this?
     time = datetime.now()
     time_string = datetime.strftime(time, "%Y-%m-%d %H:%M:%S")
     return time_string
@@ -153,8 +156,7 @@ def post_heart_rate():
     hr_info = read_heart_rate_info(in_dict)
     timestamp = current_time()
     add_heart_rate = add_heart_rate_to_patient_db(hr_info,
-                                                  timestamp,
-                                                  patient_db)
+                                                  timestamp)
     if add_heart_rate is not True:
         return add_heart_rate, 400
     return "Heart rate information is stored", 200
