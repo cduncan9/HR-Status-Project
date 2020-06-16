@@ -157,20 +157,22 @@ def test_read_heart_rate_info(data, expected):
     assert answer == expected
 
 # I dont know how to test this
-# @pytest.mark.parametrize('hr_info, timestamp, patient_db, expected',
-#                          [([1, 100], '2018-03-09 11:00:36',
-#                            [{"patient_id": 1, "attending_username": 'Therien.A',
-#                              "patient_age": 21, "heart_rate": list(),
-#                              "timestamp": list(), "status": ""}], True),
-#                           ([2, 200], '2018-03-09 11:00:36',
-#                            [{"patient_id": 2, "attending_username": 'Duncan.C',
-#                              "patient_age": 21, "heart_rate": list(),
-#                              "timestamp": list(), "status": ""}], True)
-#                           ])
-# def test_add_heart_rate_to_patient_db(hr_info, timestamp, patient_db, expected):
-#     from heart_rate_server import add_heart_rate_to_patient_db
-#     answer = add_heart_rate_to_patient_db(hr_info, timestamp)
-#     assert answer == expected
+@pytest.mark.parametrize('hr_info, timestamp, db, expected',
+                         [([1, 100], '2018-03-09 11:00:36',
+                           [{"patient_id": 1, "attending_username": 'Therien.A',
+                             "patient_age": 21, "heart_rate": list(),
+                             "timestamp": list(), "status": ""}], True),
+                          ([2, 200], '2018-03-09 11:00:36',
+                           [{"patient_id": 2, "attending_username": 'Duncan.C',
+                             "patient_age": 21, "heart_rate": list(),
+                             "timestamp": list(), "status": ""}], True)
+                          ])
+def test_add_heart_rate_to_patient_db(hr_info, timestamp, db, expected):
+    from heart_rate_server import add_heart_rate_to_patient_db, patient_db
+    global patient_db
+    patient_db = db
+    answer = add_heart_rate_to_patient_db(hr_info, timestamp)
+    assert answer == expected
 
 
 # @pytest.mark.parametrize("hr_info, timestamp, expected",

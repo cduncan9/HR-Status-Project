@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from datetime import datetime
+import requests
 
 patient_db = list()
 attendant_db = list()
@@ -118,15 +119,19 @@ def add_heart_rate_to_patient_db(hr_info, timestamp):
     return "Error in adding heart rate info to database"
 
 
-def current_time():
-    # How can we test this?
-    time = datetime.now()
-    time_string = datetime.strftime(time, "%Y-%m-%d %H:%M:%S")
+def current_time(time_input):
+    # How can we test this
+    time_string = datetime.strftime(time_input, "%Y-%m-%d %H:%M:%S")
     return time_string
 
 
-def send_email():
+def send_email(hr_info, timestamp):
     # this email will make the POST request to email the physician
+    server = "http://vcm-7631.vm.duke.edu:5007/hrss/send_email"
+    email_dict = {"from_email": "",
+                  "to_email": "",
+                  "subject": "",
+                  "content": ""}
     return
 
 
@@ -169,12 +174,14 @@ def post_heart_rate():
     if verify_input is not True:
         return verify_input, 400
     hr_info = read_heart_rate_info(in_dict)
-    timestamp = current_time()
+    timestamp = current_time(datetime.now())
     add_heart_rate = add_heart_rate_to_patient_db(hr_info,
                                                   timestamp)
     if add_heart_rate is not True:
         return add_heart_rate, 400
     check_tachycardic = check_heart_rate(hr_info, timestamp)
+    if check_tachycardic is not True:
+        return check_tachycardic, 200
     return "Heart rate information is stored", 200
 
 
