@@ -26,7 +26,12 @@ def add_new_attendant():
     print(r.text)
 
 
+def get_heart_rate():
+    r = requests.get(server_name+"/api/status/1")
+    print(r.text)
+
 if __name__ == '__main__':
     add_new_attendant()
     add_new_patient()
     add_heart_rate()
+    get_heart_rate()
