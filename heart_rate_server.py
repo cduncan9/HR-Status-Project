@@ -118,8 +118,14 @@ def verify_heart_rate_post(in_dict):
     return True
 
 
-def read_heart_rate_info():
-    return
+def read_heart_rate_info(in_dict):
+    patient_id = in_dict['patient_id']
+    heart_rate = in_dict['heart_rate']
+    if type(patient_id) == str:
+        patient_id = int(patient_id)
+    if type(heart_rate) == str:
+        heart_rate = int(heart_rate)
+    return [patient_id, heart_rate]
 
 
 if __name__ == '__main__':
