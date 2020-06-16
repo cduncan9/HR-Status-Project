@@ -104,6 +104,7 @@ def get_patient_heart_rates(patient_id, db):
             return patient["heart_rate"]
     return "Patient not found", 400
 
+
 def get_patient_average_heart_rate(patient_id, db):
     data = get_patient_heart_rates(patient_id, db)
     if type(data) is not list:
