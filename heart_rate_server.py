@@ -105,6 +105,14 @@ def get_patient_heart_rates(patient_id, db):
     return "Patient not found", 400
 
 
+def get_patient_average_heart_rate(patient_id, db):
+    data = get_patient_heart_rates(patient_id, db)
+    if type(data) is not list:
+        return "Patient not found", 400
+    else:
+        return sum(data) / len(data)
+
+
 def read_heart_rate_info(in_dict):
     patient_id = in_dict['patient_id']
     heart_rate = in_dict['heart_rate']
@@ -209,9 +217,14 @@ def post_heart_rate():
     return "Heart rate information is stored", 200
 
 
-@app.route("/api/status/<patient_id>", methods=["GET"])
+@app.route("/api/heart_rate/<patient_id>", methods=["GET"])
 def get_patient_heart_data(patient_id):
     return jsonify(get_patient_heart_rates(patient_id, patient_db))
+
+
+@app.route("/api/heart_rate/average/<patient_id>", methods=["GET"])
+def get_patient_avg_heart_rate(patient_id):
+    return jsonify(get_patient_average_heart_rate(patient_id, patient_db))
 
 
 if __name__ == '__main__':
