@@ -125,6 +125,10 @@ def current_time():
     return time_string
 
 
+def check_heart_rate(hr_info, timestamp):
+    return
+
+
 # Put all of the route functions below this line
 @app.route("/api/new_patient", methods=["POST"])
 def post_new_patient():
@@ -159,6 +163,7 @@ def post_heart_rate():
                                                   timestamp)
     if add_heart_rate is not True:
         return add_heart_rate, 400
+    check_tachycardic = check_heart_rate(hr_info, timestamp)
     return "Heart rate information is stored", 200
 
 
