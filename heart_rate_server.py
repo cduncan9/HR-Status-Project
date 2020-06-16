@@ -125,8 +125,19 @@ def current_time():
     return time_string
 
 
-def check_heart_rate(hr_info, timestamp):
+def send_email():
+    # this email will make the POST request to email the physician
     return
+
+
+def check_heart_rate(hr_info, timestamp):
+    for patient in patient_db:
+        if patient['patient_id'] == hr_info[0]:
+            age = patient['patient_age']
+    if is_tachycardic(age, hr_info[1]):
+        send_email(hr_info, timestamp)
+        return 'Heart rate is too high. Email sent to physician.'
+    return True
 
 
 # Put all of the route functions below this line

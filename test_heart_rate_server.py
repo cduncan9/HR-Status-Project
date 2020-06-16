@@ -173,11 +173,11 @@ def test_read_heart_rate_info(data, expected):
 #     assert answer == expected
 
 
-@pytest.mark.parametrize("hr_info, timestamp, expected",
-                         [([1, 100], '2018-03-09 11:00:36', True),
-                          ([1, 200], '2018-03-09 11:00:36',
-                           'Heart rate is too high. Email sent to physician.')])
-def test_check_heart_rate(hr_info, timestamp, expected):
-    from heart_rate_server import check_heart_rate
-    answer = check_heart_rate(hr_info, timestamp)
-    assert answer == expected
+# @pytest.mark.parametrize("hr_info, timestamp, expected",
+#                          [([1, 100], '2018-03-09 11:00:36', True),
+#                           ([1, 200], '2018-03-09 11:00:36',
+#                            'Heart rate is too high. Email sent to physician.')])
+# def test_check_heart_rate(hr_info, timestamp, expected):
+#     from heart_rate_server import check_heart_rate
+#     answer = check_heart_rate(hr_info, timestamp)
+#     assert answer == expected
