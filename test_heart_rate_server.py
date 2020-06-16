@@ -125,3 +125,20 @@ def test_verify_new_patient_info(data, expected):
     from heart_rate_server import verify_new_patient_info
     answer = verify_new_patient_info(data)
     assert answer == expected
+
+
+@pytest.mark.parametrize("data, expected",
+                         [({'patient_id': 1,
+                           'heart_rate': 100}, True),
+                          ({'patient_id': '1',
+                            'heart_rate': 100}, True),
+                          ({'patient_id': 1,
+                            'heart_rate': '100'}, True),
+                          ({'patientID': 1,
+                            'heart_rate': 100}, "patient_id key not found in input"),
+                          ({'patient_id': 'One',
+                            'heart_rate': '100'}, 'patient_id value is not the correct type')])
+def test_verify_heart_rate_post(data, expected):
+    from heart_rate_server import verify_heart_rate_post
+    answer = verify_heart_rate_post(data)
+    assert answer == expected

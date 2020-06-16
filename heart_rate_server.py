@@ -15,7 +15,7 @@ def is_tachycardic(age, hr):
         return True
     elif 8 < age <= 11 and hr > 130:
         return True
-    elif 12 < age <= 15 and hr > 199:
+    elif 12 < age <= 15 and hr > 119:
         return True
     elif 15 < age and hr > 100:
         return True
@@ -105,6 +105,11 @@ def post_new_attending():
     in_dict = request.get_json()
     print(add_patient_to_db(read_attending(in_dict)))
     return "Attendant information stored", 200
+
+
+def verify_heart_rate_post():
+    return 
+
 
 if __name__ == '__main__':
     app.run()
