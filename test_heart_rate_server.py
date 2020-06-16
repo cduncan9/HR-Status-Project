@@ -181,21 +181,31 @@ def test_add_heart_rate_to_patient_db(hr_info, timestamp, db, expected):
     assert answer == expected
 
 
-@pytest.mark.parametrize("hr_info, timestamp, db, expected",
+@pytest.mark.parametrize("hr_info, timestamp, pat_db, att_db, expected",
                          [([1, 100], '2018-03-09 11:00:36',
                            [{"patient_id": 1,
                              "attending_username": 'Therien.A',
                              "patient_age": 21, "heart_rate": list(),
-                             "timestamp": list(), "status": ""}], True),
-                          ([1, 200], '2018-03-09 11:00:36',
+                             "timestamp": list(), "status": ""}],
+                           [{"attending_username": "Canyon.D",
+                             "attending_email": "canyon@duke.edu",
+                             "attending_phone": "919-200-8973",
+                             "patients": [20]}], True),
+                          ([20, 200], '2018-03-09 11:00:36',
                            [{"patient_id": 2, "attending_username": 'Duncan.C',
                              "patient_age": 21, "heart_rate": list(),
                              "timestamp": list(), "status": ""}],
-                           'Heart rate is too high. Email sent to physician.')
+                           [{"attending_username": "Canyon.D",
+                             "attending_email": "canyon@duke.edu",
+                             "attending_phone": "919-200-8973",
+                             "patients": [20]}],
+                             'E-mail sent to canyon@duke.edu from warning@hrsentinalserver.com')
                           ])
-def test_check_heart_rate(hr_info, timestamp, db, expected):
-    from heart_rate_server import check_heart_rate, patient_db
-    for patient in db:
+def test_check_heart_rate(hr_info, timestamp, pat_db, att_db, expected):
+    from heart_rate_server import check_heart_rate, patient_db, attendant_db
+    for attendant in att_db:
+        attendant_db.append(attendant)
+    for patient in pat_db:
         patient_db.append(patient)
     answer = check_heart_rate(hr_info, timestamp)
     assert answer == expected
