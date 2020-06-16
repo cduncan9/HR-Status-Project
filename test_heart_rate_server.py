@@ -191,3 +191,11 @@ def test_check_heart_rate(hr_info, timestamp, db, expected):
         patient_db.append(patient)
     answer = check_heart_rate(hr_info, timestamp)
     assert answer == expected
+
+
+def test_current_time():
+    from heart_rate_server import current_time
+    time_input = datetime(2018, 3, 9, 11, 0, 36)
+    answer = current_time(time_input)
+    expected = '2018-03-09 11:00:36'
+    assert answer == expected
