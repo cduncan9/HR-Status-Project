@@ -104,6 +104,7 @@ def get_patient_heart_rates(patient_id, db):
             return patient["heart_rate"]
     return "Patient not found", 400
 
+
 def read_heart_rate_info(in_dict):
     patient_id = in_dict['patient_id']
     heart_rate = in_dict['heart_rate']
@@ -205,6 +206,7 @@ def post_heart_rate():
         return check_tachycardic, 200
     print(patient_db)
     return "Heart rate information is stored", 200
+
 
 @app.route("/api/status/<patient_id>", methods=["GET"])
 def get_patient_heart_data(patient_id):

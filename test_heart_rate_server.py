@@ -212,7 +212,7 @@ def test_get_patient_heart_rates():
            "patient_age": 21, "heart_rate": [100],
            "timestamp": list(), "status": ""}]
     answer = get_patient_heart_rates("1", db)
-    expected = [100]
+    expected = [120]
     assert answer == expected
 
 
