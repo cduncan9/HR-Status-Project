@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 
 patient_db = list()
+attendant_db = list()
 
 app = Flask(__name__)
 
@@ -65,6 +66,25 @@ def add_patient_to_db(info):
     patient_db.append(new_patient_dict)
 
 
+def add_attendant_to_db(info, db):
+    new_attendant_dict = {"attending_username": info[0],
+                          "attending_email": info[1],
+                          "attending_phone": info[2],
+                          "patients": list()}
+    db.append(new_attendant_dict)
+    return db
+
+
+def add_patient_to_attendant_db(info, db):
+    patient_id = info[0]
+    attendant_name = info[1]
+    for attendant in db:
+        if attendant["attending_username"] == attendant_name:
+            attendant["patients"].append(patient_id)
+            return False
+    return True
+
+
 @app.route("/api/new_patient", methods=["POST"])
 def post_new_patient():
     in_dict = request.get_json()
@@ -73,9 +93,18 @@ def post_new_patient():
         return verify_input, 400
     patient_info = read_patient(in_dict)
     add_patient_to_db(patient_info)
+    flag = add_patient_to_attendant_db(patient_info, attendant_db)
+    if flag:
+        return "Attendant does not exist", 400
     print(patient_db)
     return "Patient information stored", 200
 
+
+@app.route("/api/new_attending", methods=["POST"])
+def post_new_attending():
+    in_dict = request.get_json()
+    print(add_patient_to_db(read_attending(in_dict)))
+    return "Attendant information stored", 200
 
 if __name__ == '__main__':
     app.run()

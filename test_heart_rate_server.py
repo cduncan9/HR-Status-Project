@@ -59,6 +59,51 @@ def test_read_attending(data, expected):
     assert answer == expected
 
 
+@pytest.mark.parametrize("info, db, expected",
+                         [([1, "Canyon.D", 20],
+                           [{"attending_username": "Canyon.D",
+                             "attending_email": "john.j@gmail.com",
+                             "attending_phone": "919-289-5445",
+                             "patients": [5]}],
+                           False),
+                          ([1, "Canyon.D", 20],
+                           [{"attending_username": "Giannis.A",
+                             "attending_email": "giannis.a@bucks.net",
+                             "attending_phone": "287-987-0098",
+                             "patients": [20]}],
+                           True)])
+def test_read_attending(info, db, expected):
+    from heart_rate_server import add_patient_to_attendant_db
+    answer = add_patient_to_attendant_db(info, db)
+    assert answer == expected
+
+
+@pytest.mark.parametrize("info, db, expected",
+                         [(["Canyon.D", "canyon@duke.edu", "919-200-8973"],
+                           [{"attending_username": "John.D",
+                             "attending_email": "john.j@gmail.com",
+                             "attending_phone": "919-289-5445",
+                             "patients": [5]}],
+                           [{"attending_username": "John.D",
+                             "attending_email": "john.j@gmail.com",
+                             "attending_phone": "919-289-5445",
+                             "patients": [5]},
+                            {"attending_username": "Canyon.D",
+                             "attending_email": "canyon@duke.edu",
+                             "attending_phone": "919-200-8973",
+                             "patients": []}]),
+                          (["Canyon.D", "canyon@duke.edu", "919-200-8973"],
+                           [],
+                           [{"attending_username": "Canyon.D",
+                             "attending_email": "canyon@duke.edu",
+                             "attending_phone": "919-200-8973",
+                             "patients": []}])])
+def test_read_attending(info, db, expected):
+    from heart_rate_server import add_attendant_to_db
+    answer = add_attendant_to_db(info, db)
+    assert answer == expected
+
+
 @pytest.mark.parametrize("data, expected",
                          [({"patient_id": 1,
                             "attending_username": "Canyon.D",
