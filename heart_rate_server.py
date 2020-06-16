@@ -98,6 +98,13 @@ def verify_heart_rate_post(in_dict):
     return True
 
 
+def get_patient_heart_rates(patient_id, db):
+    for patient in db:
+        if patient_id == str(patient["patient_id"]):
+            return patient["heart_rate"]
+    return "Patient not found", 400
+
+
 def read_heart_rate_info(in_dict):
     patient_id = in_dict['patient_id']
     heart_rate = in_dict['heart_rate']
@@ -198,7 +205,13 @@ def post_heart_rate():
     check_tachycardic = check_heart_rate(hr_info, timestamp)
     if check_tachycardic is not True:
         return check_tachycardic, 200
+    print(patient_db)
     return "Heart rate information is stored", 200
+
+
+@app.route("/api/status/<patient_id>", methods=["GET"])
+def get_patient_heart_data(patient_id):
+    return jsonify(get_patient_heart_rates(patient_id, patient_db))
 
 
 if __name__ == '__main__':
