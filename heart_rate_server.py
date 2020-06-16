@@ -147,10 +147,11 @@ def send_email(hr_info, timestamp):
                   "subject": "PATIENT {} HAS TACHYCARDIA".format(hr_info[0]),
                   "content": email_content}
     r = requests.post(server, json=email_dict)
-    return "Heart rate is too high. Email sent to physician."
+    return r.text
 
 
 def check_heart_rate(hr_info, timestamp):
+    age = 1
     for patient in patient_db:
         if patient['patient_id'] == hr_info[0]:
             age = patient['patient_age']
