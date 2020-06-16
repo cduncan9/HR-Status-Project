@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from datetime import datetime
 
 patient_db = list()
 attendant_db = list()
@@ -84,29 +85,6 @@ def add_patient_to_attendant_db(info, db):
             return False
     return True
 
-
-@app.route("/api/new_patient", methods=["POST"])
-def post_new_patient():
-    in_dict = request.get_json()
-    verify_input = verify_new_patient_info(in_dict)
-    if verify_input is not True:
-        return verify_input, 400
-    patient_info = read_patient(in_dict)
-    add_patient_to_db(patient_info)
-    flag = add_patient_to_attendant_db(patient_info, attendant_db)
-    if flag:
-        return "Attendant does not exist", 400
-    print(patient_db)
-    return "Patient information stored", 200
-
-
-@app.route("/api/new_attending", methods=["POST"])
-def post_new_attending():
-    in_dict = request.get_json()
-    print(add_patient_to_db(read_attending(in_dict)))
-    return "Attendant information stored", 200
-
-
 def verify_heart_rate_post(in_dict):
     expected_keys = ("patient_id", "heart_rate")
     expected_values = (int, int)
@@ -126,6 +104,47 @@ def read_heart_rate_info(in_dict):
     if type(heart_rate) == str:
         heart_rate = int(heart_rate)
     return [patient_id, heart_rate]
+
+
+def add_heart_rate_to_patient_db(hr_info, timestamp):
+    return
+
+
+# Put all of the route functions below this line
+@app.route("/api/new_patient", methods=["POST"])
+def post_new_patient():
+    in_dict = request.get_json()
+    verify_input = verify_new_patient_info(in_dict)
+    if verify_input is not True:
+        return verify_input, 400
+    patient_info = read_patient(in_dict)
+    add_patient_to_db(patient_info)
+    flag = add_patient_to_attendant_db(patient_info, attendant_db)
+    if flag:
+        return "Attendant does not exist", 400
+    return "Patient information stored", 200
+
+
+@app.route("/api/new_attending", methods=["POST"])
+def post_new_attending():
+    in_dict = request.get_json()
+    print(add_patient_to_db(read_attending(in_dict)))
+    return "Attendant information stored", 200
+
+
+@app.route("/api/heart_rate", methods=["POST"])
+def post_heart_rate():
+    in_dict = request.get_json()
+    verify_input = verify_heart_rate_post(in_dict)
+    if verify_input is not True:
+        return verify_input, 400
+    hr_info = read_heart_rate_info(in_dict)
+    timestamp = datetime.now()
+    add_heart_rate = add_heart_rate_to_patient_db(hr_info, timestamp)
+    if add_heart_rate is not True:
+        return add_heart_rate, 400
+    return "Heart rate information is stored", 200
+
 
 
 if __name__ == '__main__':
