@@ -247,21 +247,31 @@ def test_get_patient_heart_rates(patient_id, db, expected):
     assert answer == expected
 
 
-def test_find_patient():
+@pytest.mark.parametrize("patient_id, db, expected",
+                         [(106, [{"patient_id": 106,
+                                  "attending_username": 'Therien.A',
+                                  "patient_age": 21, "heart_rate": [120],
+                                  "timestamp": list(), "status": ""},
+                                 {"patient_id": 107,
+                                  "attending_username": 'Therien.A',
+                                  "patient_age": 21, "heart_rate": [100],
+                                  "timestamp": list(), "status": ""}],
+                           {"patient_id": 106,
+                            "attending_username": 'Therien.A',
+                            "patient_age": 21, "heart_rate": [120],
+                            "timestamp": list(), "status": ""}
+                           ), (111, [{"patient_id": 1,
+                                      "attending_username": 'Therien.A',
+                                      "patient_age": 21, "heart_rate": [120],
+                                      "timestamp": list(), "status": ""},
+                                     {"patient_id": 2,
+                                      "attending_username": 'Therien.A',
+                                      "patient_age": 21, "heart_rate": [100],
+                                      "timestamp": list(), "status": ""}],
+                               ('Patient not found', 400))])
+def test_find_patient(patient_id, db, expected):
     from heart_rate_server import find_patient
-    dict = [{"patient_id": 1,
-             "attending_username": 'Therien.A',
-             "patient_age": 21, "heart_rate": list(),
-             "timestamp": list(), "status": ""},
-            {"patient_id": 2,
-             "attending_username": 'Duncan.C',
-             "patient_age": 21, "heart_rate": list(),
-             "timestamp": list(), "status": ""}]
-    expected = {"patient_id": 1,
-                "attending_username": 'Therien.A',
-                "patient_age": 21, "heart_rate": list(),
-                "timestamp": list(), "status": ""}
-    answer = find_patient(1, dict)
+    answer = find_patient(patient_id, db)
     assert answer == expected
 
 
