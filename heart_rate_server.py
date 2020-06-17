@@ -10,6 +10,17 @@ app = Flask(__name__)
 
 
 def is_tachycardic(age, hr):
+    '''determines based on age if heart rate is tachycardic
+
+    Tachycardia is a heart condition in which the heart beats abnormally
+    fast. The conditions for diagnosing tachycardia that were employed in
+    this function were taken from "https://en.wikipedia.org/wiki/Tachycardia"
+
+    :param age: int containing patient's age
+    :param hr: int containin patient's heart rate
+
+    :return: True if tachycardic and False if not tachycardic
+    '''
     if 1 <= age <= 2 and hr > 151:
         return True
     elif 3 < age <= 4 and hr > 137:
@@ -27,6 +38,18 @@ def is_tachycardic(age, hr):
 
 
 def check_bad_input(input):
+    '''checks if input contains non-numeric characters
+
+    Patient IDs can be input in strings or integers. If the
+    type of the input is not a string, we know it is an integer
+    and a valid patient ID. If it is a string we need to check if
+    it contains any non-numeric characters which is done with
+    .isdigit()
+
+    :param input: str or in containing Patient ID
+
+    :return: True if input is bad, False if input is good
+    '''
     if type(input) == str:
         if not input.isdigit():
             return True
