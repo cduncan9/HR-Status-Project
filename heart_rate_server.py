@@ -225,7 +225,9 @@ def verify_attendant_exists(attending_username):
 
 
 def get_patient_id_list(attending_username):
-    return
+    for attendant in attendant_db:
+        if attendant["attending_username"] == attending_username:
+            return attendant["patients"]
 
 
 def patients_for_attending_username(patient_id_list):
