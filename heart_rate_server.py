@@ -218,7 +218,10 @@ def get_patient_status(patient_id):
 
 
 def verify_attendant_exists(attending_username):
-    return
+    for attendant in attendant_db:
+        if attendant["attending_username"] == attending_username:
+            return True
+    return "The physician does not exist in database"
 
 
 def get_patient_id_list(attending_username):
