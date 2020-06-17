@@ -73,7 +73,7 @@ def test_read_attending(data, expected):
                              "attending_phone": "287-987-0098",
                              "patients": [20]}],
                            True)])
-def test_read_attending(info, db, expected):
+def test_add_patient_to_attendant_db(info, db, expected):
     from heart_rate_server import add_patient_to_attendant_db
     answer = add_patient_to_attendant_db(info, db)
     assert answer == expected
@@ -99,7 +99,7 @@ def test_read_attending(info, db, expected):
                              "attending_email": "canyon@duke.edu",
                              "attending_phone": "919-200-8973",
                              "patients": []}])])
-def test_read_attending(info, db, expected):
+def test_add_attendant_to_db(info, db, expected):
     from heart_rate_server import add_attendant_to_db
     answer = add_attendant_to_db(info, db)
     assert answer == expected
@@ -130,7 +130,7 @@ def test_verify_new_patient_info(data, expected):
 
 @pytest.mark.parametrize("data, expected",
                          [({'patient_id': 1,
-                           'heart_rate': 100}, True),
+                            'heart_rate': 100}, True),
                           ({'patient_id': '1',
                             'heart_rate': 100}, True),
                           ({'patient_id': 1,
@@ -149,7 +149,7 @@ def test_verify_heart_rate_post(data, expected):
 
 @pytest.mark.parametrize('data, expected',
                          [({'patient_id': 1,
-                           'heart_rate': 100}, [1, 100]),
+                            'heart_rate': 100}, [1, 100]),
                           ({'patient_id': '1',
                             'heart_rate': 100}, [1, 100]),
                           ({'patient_id': 1,
@@ -160,7 +160,6 @@ def test_read_heart_rate_info(data, expected):
     assert answer == expected
 
 
-# I dont know how to test this
 @pytest.mark.parametrize('hr_info, timestamp, db, expected',
                          [([1, 100], '2018-03-09 11:00:36',
                            [{"patient_id": 1,
@@ -172,7 +171,9 @@ def test_read_heart_rate_info(data, expected):
                              "attending_username": 'Duncan.C',
                              "patient_age": 21, "heart_rate": list(),
                              "timestamp": list(), "status": ""}],
-                             "Error in adding heart rate info to database")])
+                           "Error in adding heart rate info to database"),
+                          ([0, 100], '2018-03-09 11:00:36', [],
+                           "Error in adding heart rate info to database")])
 def test_add_heart_rate_to_patient_db(hr_info, timestamp, db, expected):
     from heart_rate_server import add_heart_rate_to_patient_db, patient_db
     for patient in db:
@@ -192,15 +193,26 @@ def test_add_heart_rate_to_patient_db(hr_info, timestamp, db, expected):
                              "attending_phone": "919-200-8973",
                              "patients": [20]}], True),
                           ([20, 200], '2018-03-09 11:00:36',
-                           [{"patient_id": 2, "attending_username": 'Duncan.C',
+                           [{"patient_id": 20,
+                             "attending_username": 'Duncan.C',
                              "patient_age": 21, "heart_rate": list(),
                              "timestamp": list(), "status": ""}],
                            [{"attending_username": "Canyon.D",
                              "attending_email": "canyon@duke.edu",
                              "attending_phone": "919-200-8973",
                              "patients": [20]}],
-                             'E-mail sent to canyon@duke.edu'
-                             ' from warning@hrsentinalserver.com')
+                           'E-mail sent to canyon@duke.edu'
+                           ' from warning@hrsentinalserver.com'),
+                          ([201, 200], '2018-03-09 11:00:36',
+                           [{"patient_id": 201,
+                             "attending_username": 'Duncan.C',
+                             "patient_age": 21, "heart_rate": list(),
+                             "timestamp": list(), "status": ""}],
+                           [{"attending_username": "Canyon.D",
+                             "attending_email": "",
+                             "attending_phone": "919-200-8973",
+                             "patients": [201]}],
+                           "'to_email' is not a correct e-mail address")
                           ])
 def test_check_heart_rate(hr_info, timestamp, pat_db, att_db, expected):
     from heart_rate_server import check_heart_rate, patient_db, attendant_db
@@ -212,36 +224,97 @@ def test_check_heart_rate(hr_info, timestamp, pat_db, att_db, expected):
     assert answer == expected
 
 
-def test_get_patient_heart_rates():
+@pytest.mark.parametrize("patient_id, db, expected",
+                         [("1", [{"patient_id": 1,
+                                  "attending_username": 'Therien.A',
+                                  "patient_age": 21, "heart_rate": [120],
+                                  "timestamp": list(), "status": ""},
+                                 {"patient_id": 2,
+                                  "attending_username": 'Therien.A',
+                                  "patient_age": 21, "heart_rate": [100],
+                                  "timestamp": list(), "status": ""}],
+                           [120]), ("4", [{"patient_id": 1,
+                                           "attending_username": 'Therien.A',
+                                           "patient_age": 21,
+                                           "heart_rate": [120],
+                                           "timestamp": list(), "status": ""},
+                                          {"patient_id": 2,
+                                           "attending_username": 'Therien.A',
+                                           "patient_age": 21,
+                                           "heart_rate": [100],
+                                           "timestamp": list(), "status": ""}],
+                                    ('Patient not found', 400))])
+def test_get_patient_heart_rates(patient_id, db, expected):
     from heart_rate_server import get_patient_heart_rates
-    db = [{"patient_id": 1,
-           "attending_username": 'Therien.A',
-           "patient_age": 21, "heart_rate": [120],
-           "timestamp": list(), "status": ""},
-          {"patient_id": 1,
-           "attending_username": 'Therien.A',
-           "patient_age": 21, "heart_rate": [100],
-           "timestamp": list(), "status": ""}]
-    answer = get_patient_heart_rates("1", db)
-    expected = [120]
+    answer = get_patient_heart_rates(patient_id, db)
     assert answer == expected
 
 
-def test_find_patient():
+@pytest.mark.parametrize("patient_id, db, expected",
+                         [(106, [{"patient_id": 106,
+                                  "attending_username": 'Therien.A',
+                                  "patient_age": 21, "heart_rate": [120],
+                                  "timestamp": list(), "status": ""},
+                                 {"patient_id": 107,
+                                  "attending_username": 'Therien.A',
+                                  "patient_age": 21, "heart_rate": [100],
+                                  "timestamp": list(), "status": ""}],
+                           {"patient_id": 106,
+                            "attending_username": 'Therien.A',
+                            "patient_age": 21, "heart_rate": [120],
+                            "timestamp": list(), "status": ""}
+                           ), (111, [{"patient_id": 1,
+                                      "attending_username": 'Therien.A',
+                                      "patient_age": 21,
+                                      "heart_rate": [120],
+                                      "timestamp": list(), "status": ""},
+                                     {"patient_id": 2,
+                                      "attending_username": 'Therien.A',
+                                      "patient_age": 21,
+                                      "heart_rate": [100],
+                                      "timestamp": list(), "status": ""}],
+                               ('Patient not found', 400))])
+def test_find_patient(patient_id, db, expected):
     from heart_rate_server import find_patient
-    dict = [{"patient_id": 1,
-             "attending_username": 'Therien.A',
-             "patient_age": 21, "heart_rate": list(),
-             "timestamp": list(), "status": ""},
-            {"patient_id": 2,
-             "attending_username": 'Duncan.C',
-             "patient_age": 21, "heart_rate": list(),
-             "timestamp": list(), "status": ""}]
-    expected = {"patient_id": 1,
-                "attending_username": 'Therien.A',
-                "patient_age": 21, "heart_rate": list(),
-                "timestamp": list(), "status": ""}
-    answer = find_patient(1, dict)
+    answer = find_patient(patient_id, db)
+    assert answer == expected
+
+
+@pytest.mark.parametrize("patient_id, db, expected",
+                         [('106', [{"patient_id": 106,
+                                    "attending_username": 'Therien.A',
+                                    "patient_age": 21,
+                                    "heart_rate": [120, 100],
+                                    "timestamp": list(), "status": ""},
+                                   {"patient_id": 107,
+                                    "attending_username": 'Therien.A',
+                                    "patient_age": 21,
+                                    "heart_rate": [100, 120, 140],
+                                    "timestamp": list(), "status": ""}], 110),
+                          ('107', [{"patient_id": 106,
+                                    "attending_username": 'Therien.A',
+                                    "patient_age": 21,
+                                    "heart_rate": [120, 100],
+                                    "timestamp": list(), "status": ""},
+                                   {"patient_id": 107,
+                                    "attending_username": 'Therien.A',
+                                    "patient_age": 21,
+                                    "heart_rate": [100, 120, 140],
+                                    "timestamp": list(), "status": ""}], 120),
+                          ('108', [{"patient_id": 106,
+                                    "attending_username": 'Therien.A',
+                                    "patient_age": 21,
+                                    "heart_rate": [120, 100],
+                                    "timestamp": list(), "status": ""},
+                                   {"patient_id": 107,
+                                    "attending_username": 'Therien.A',
+                                    "patient_age": 21,
+                                    "heart_rate": [100, 120, 140],
+                                    "timestamp": list(), "status": ""}],
+                           ('Patient not found', 400))])
+def test_get_patient_average_heart_rate(patient_id, db, expected):
+    from heart_rate_server import get_patient_average_heart_rate
+    answer = get_patient_average_heart_rate(patient_id, db)
     assert answer == expected
 
 
@@ -261,7 +334,9 @@ def test_current_time():
                                {"attending_username": "Aidan.T",
                                 "attending_email": "aidan@duke.edu",
                                 "attending_phone": "919-200-8973",
-                                "patients": [2]}], "canyon@duke.edu")])
+                                "patients": [2]}], "canyon@duke.edu"),
+                          (2, [], "aidan@duke.edu"),
+                          (315, [], False)])
 def test_find_physician_email(patient_id, db, expected):
     from heart_rate_server import find_physician_email, attendant_db
     for attendant in db:
@@ -331,7 +406,7 @@ def test_find_physician_email(patient_id, db, expected):
                                    "status": "tachycardic"}],
                            {"heart_rate": 80, "status": "not tachycardic",
                             "timestamp": '2020-03-10 11:01:36'}
-                           )])
+                           ), (1019, [], "Patient not found")])
 def test_get_patient_status(patient_id, db, expected):
     from heart_rate_server import patient_db, get_patient_status
     for patient in db:
@@ -342,8 +417,8 @@ def test_get_patient_status(patient_id, db, expected):
 
 @pytest.mark.parametrize("time, times, expected",
                          [("2018-03-09 11:00:36",
-                          ["2018-03-09 10:00:36", "2018-03-09 11:00:36",
-                           "2018-03-09 11:00:36"],
+                           ["2018-03-09 10:00:36", "2018-03-09 11:00:36",
+                            "2018-03-09 11:00:36"],
                            1),
                           ("2018-03-09 11:00:36",
                            ["2018-03-09 10:00:36", "2018-03-09 11:00:25",
@@ -373,15 +448,16 @@ def test_find_first_time(time, times, expected):
                              "attending_phone": "919-200-8973",
                              "patients": [502]},
                             {"attending_username": "Bob.D",
-                                "attending_email": "robert@duke.edu",
-                                "attending_phone": "919-200-8973",
-                                "patients": [503, 504, 505]},
+                             "attending_email": "robert@duke.edu",
+                             "attending_phone": "919-200-8973",
+                             "patients": [503, 504, 505]},
                             {"attending_username": "Zion.W",
-                                "attending_email": "Zion@duke.edu",
-                                "attending_phone": "919-200-8973",
-                                "patients": []}], True),
+                             "attending_email": "Zion@duke.edu",
+                             "attending_phone": "919-200-8973",
+                             "patients": []}], True),
                           ("Max.G", [],
-                           "The physician does not exist in database")])
+                           "The physician does not exist in database"),
+                          ("Zion.W", [], True)])
 def test_verify_attendant_exists(attending_username, db, expected):
     from heart_rate_server import verify_attendant_exists, attendant_db
     for attendant in db:
@@ -392,22 +468,22 @@ def test_verify_attendant_exists(attending_username, db, expected):
 
 @pytest.mark.parametrize("attending_username, db, expected",
                          [("Bob.D",
-                          [{"attending_username": "Aidan.T",
-                            "attending_email": "aidan@duke.edu",
-                            "attending_phone": "919-200-8973",
-                            "patients": [500, 501]},
-                           {"attending_username": "Canyon.D",
-                            "attending_email": "canyon@duke.edu",
-                            "attending_phone": "919-200-8973",
-                            "patients": [502]},
-                           {"attending_username": "Bob.D",
-                            "attending_email": "robert@duke.edu",
-                            "attending_phone": "919-200-8973",
-                            "patients": [503, 504, 505]},
-                           {"attending_username": "Zion.W",
-                            "attending_email": "Zion@duke.edu",
-                            "attending_phone": "919-200-8973",
-                            "patients": []}], [503, 504, 505]),
+                           [{"attending_username": "Aidan.T",
+                             "attending_email": "aidan@duke.edu",
+                             "attending_phone": "919-200-8973",
+                             "patients": [500, 501]},
+                            {"attending_username": "Canyon.D",
+                             "attending_email": "canyon@duke.edu",
+                             "attending_phone": "919-200-8973",
+                             "patients": [502]},
+                            {"attending_username": "Bob.D",
+                             "attending_email": "robert@duke.edu",
+                             "attending_phone": "919-200-8973",
+                             "patients": [503, 504, 505]},
+                            {"attending_username": "Zion.W",
+                             "attending_email": "Zion@duke.edu",
+                             "attending_phone": "919-200-8973",
+                             "patients": []}], [503, 504, 505]),
                           ("Zion.W", [], [])])
 def test_get_patient_id_list(attending_username, db, expected):
     from heart_rate_server import get_patient_id_list, attendant_db
@@ -419,42 +495,43 @@ def test_get_patient_id_list(attending_username, db, expected):
 
 @pytest.mark.parametrize("patient_id_list, pat_db, expected",
                          [([602, 603],
-                          [{"patient_id": 601,
-                            "attending_username": 'Therien.A',
-                            "patient_age": 21,
-                            "heart_rate": [70, 65],
-                            "timestamp": ['2020-03-09 11:00:36',
-                                          '2020-03-10 11:00:36'],
-                            "status": "not tachycardic"},
-                           {"patient_id": 602,
-                            "attending_username": 'Duncan.C',
-                            "patient_age": 21,
-                            "heart_rate": [60, 150],
-                            "timestamp": ['2020-03-09 11:00:36',
-                                          '2020-03-10 11:02:36'],
-                            "status": "tachycardic"},
-                           {"patient_id": 603,
-                            "attending_username": 'Bob.D',
-                            "patient_age": 40,
-                            "heart_rate": [90, 80],
-                            "timestamp": ['2020-03-09 11:00:36',
-                                          '2020-03-10 11:01:36'],
-                            "status": "not tachycardic"},
-                           {"patient_id": 604,
-                            "attending_username": 'Williamson.Z',
-                            "patient_age": 19,
-                            "heart_rate": [70, 105],
-                            "timestamp": ['2020-03-09 11:00:36',
-                                          '2020-03-10 11:00:36'],
-                            "status": "tachycardic"}],
-                          [{"last_heart_rate": 150,
-                            "last_time": "2020-03-10 11:02:36",
-                            "patient_id": 602,
-                            "status":  "tachycardic"},
-                           {"last_heart_rate": 80,
-                            "last_time": "2020-03-10 11:01:36",
-                            "patient_id": 603,
-                            "status": "not tachycardic"}])])
+                           [{"patient_id": 601,
+                             "attending_username": 'Therien.A',
+                             "patient_age": 21,
+                             "heart_rate": [70, 65],
+                             "timestamp": ['2020-03-09 11:00:36',
+                                           '2020-03-10 11:00:36'],
+                             "status": "not tachycardic"},
+                            {"patient_id": 602,
+                             "attending_username": 'Duncan.C',
+                             "patient_age": 21,
+                             "heart_rate": [60, 150],
+                             "timestamp": ['2020-03-09 11:00:36',
+                                           '2020-03-10 11:02:36'],
+                             "status": "tachycardic"},
+                            {"patient_id": 603,
+                             "attending_username": 'Bob.D',
+                             "patient_age": 40,
+                             "heart_rate": [90, 80],
+                             "timestamp": ['2020-03-09 11:00:36',
+                                           '2020-03-10 11:01:36'],
+                             "status": "not tachycardic"},
+                            {"patient_id": 604,
+                             "attending_username": 'Williamson.Z',
+                             "patient_age": 19,
+                             "heart_rate": [70, 105],
+                             "timestamp": ['2020-03-09 11:00:36',
+                                           '2020-03-10 11:00:36'],
+                             "status": "tachycardic"}],
+                           [{"last_heart_rate": 150,
+                             "last_time": "2020-03-10 11:02:36",
+                             "patient_id": 602,
+                             "status": "tachycardic"},
+                            {"last_heart_rate": 80,
+                             "last_time": "2020-03-10 11:01:36",
+                             "patient_id": 603,
+                             "status": "not tachycardic"}]),
+                          ([], [], [])])
 def test_patients_for_attending_username(patient_id_list, pat_db, expected):
     from heart_rate_server import patient_db, patients_for_attending_username
     for patient in pat_db:

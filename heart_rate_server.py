@@ -178,6 +178,8 @@ def send_email(hr_info, timestamp):
                                                    hr_info[1],
                                                    timestamp))
     physician_email = find_physician_email(hr_info[0])
+    if physician_email is False:
+        return "Physician not in database", 400
     email_dict = {"from_email": "warning@hrsentinalserver.com",
                   "to_email": physician_email,
                   "subject": "PATIENT {} HAS TACHYCARDIA".format(hr_info[0]),
