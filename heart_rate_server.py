@@ -179,6 +179,7 @@ def check_heart_rate(hr_info, timestamp):
 
 
 def get_patient_status(patient_id):
+    patient_id = int(patient_id)
     for patient in patient_db:
         if patient["patient_id"] == patient_id:
             heart_rate = patient['heart_rate']

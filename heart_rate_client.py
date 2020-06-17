@@ -22,7 +22,7 @@ def add_new_patient():
 
 
 def add_heart_rate():
-    new_heart_rate = {"patient_id": 3, "heart_rate": 200}
+    new_heart_rate = {"patient_id": 1, "heart_rate": 90}
     new_heart_rate2 = {"patient_id": 3, "heart_rate": 150}
     r = requests.post(server_name+"/api/heart_rate", json=new_heart_rate)
     r2 = requests.post(server_name + "/api/heart_rate", json=new_heart_rate2)
@@ -54,9 +54,17 @@ def get_avg_heart_rate():
     print(r.text)
 
 
+def get_patient_status():
+    r = requests.get(server_name + "/api/status/3")
+    print(r.text)
+    r = requests.get(server_name + "/api/status/1")
+    print(r.text)
+
+
 if __name__ == '__main__':
     add_new_attendant()
     add_new_patient()
     add_heart_rate()
     get_heart_rate()
     get_avg_heart_rate()
+    get_patient_status()
