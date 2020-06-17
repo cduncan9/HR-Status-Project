@@ -392,22 +392,22 @@ def test_verify_attendant_exists(attending_username, db, expected):
 
 @pytest.mark.parametrize("attending_username, db, expected",
                          [("Bob.D",
-                        [{"attending_username": "Aidan.T",
-                          "attending_email": "aidan@duke.edu",
-                          "attending_phone": "919-200-8973",
-                          "patients": [500, 501]},
-                         {"attending_username": "Canyon.D",
-                          "attending_email": "canyon@duke.edu",
-                          "attending_phone": "919-200-8973",
-                          "patients": [502]},
-                         {"attending_username": "Bob.D",
-                          "attending_email": "robert@duke.edu",
-                          "attending_phone": "919-200-8973",
-                          "patients": [503, 504, 505]},
-                         {"attending_username": "Zion.W",
-                          "attending_email": "Zion@duke.edu",
-                          "attending_phone": "919-200-8973",
-                          "patients": []}], [503, 504, 505]),
+                          [{"attending_username": "Aidan.T",
+                            "attending_email": "aidan@duke.edu",
+                            "attending_phone": "919-200-8973",
+                            "patients": [500, 501]},
+                           {"attending_username": "Canyon.D",
+                            "attending_email": "canyon@duke.edu",
+                            "attending_phone": "919-200-8973",
+                            "patients": [502]},
+                           {"attending_username": "Bob.D",
+                            "attending_email": "robert@duke.edu",
+                            "attending_phone": "919-200-8973",
+                            "patients": [503, 504, 505]},
+                           {"attending_username": "Zion.W",
+                            "attending_email": "Zion@duke.edu",
+                            "attending_phone": "919-200-8973",
+                            "patients": []}], [503, 504, 505]),
                           ("Zion.W", [], [])])
 def test_get_patient_id_list(attending_username, db, expected):
     from heart_rate_server import get_patient_id_list, attendant_db
@@ -418,7 +418,7 @@ def test_get_patient_id_list(attending_username, db, expected):
 
 
 @pytest.mark.parametrize("patient_id_list, pat_db, expected",
-                         ([602, 603],
+                         [([602, 603],
                           [{"patient_id": 601,
                             "attending_username": 'Therien.A',
                             "patient_age": 21,
@@ -447,14 +447,14 @@ def test_get_patient_id_list(attending_username, db, expected):
                             "timestamp": ['2020-03-09 11:00:36',
                                           '2020-03-10 11:00:36'],
                             "status": "tachycardic"}],
-                          [{"patient_id": 602,
-                            "last_heart_rate": 150,
-                            "last_time": "2018-03-09 11:02:36",
+                          [{"last_heart_rate": 150,
+                            "last_time": "2020-03-10 11:02:36",
+                            "patient_id": 602,
                             "status":  "tachycardic"},
-                           {"patient_id": 603,
-                            "last_heart_rate": 80,
-                            "last_time": "2018-03-09 11:01:36",
-                            "status": "not tachycardic"}]))
+                           {"last_heart_rate": 80,
+                            "last_time": "2020-03-10 11:01:36",
+                            "patient_id": 603,
+                            "status": "not tachycardic"}])])
 def test_patients_for_attending_username(patient_id_list, pat_db, expected):
     from heart_rate_server import patient_db, patients_for_attending_username
     for patient in pat_db:

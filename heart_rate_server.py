@@ -231,7 +231,17 @@ def get_patient_id_list(attending_username):
 
 
 def patients_for_attending_username(patient_id_list):
-    return
+    patients_list = list()
+    for patient in patient_db:
+        if patient["patient_id"] in patient_id_list:
+            last_heart_rate = patient["heart_rate"]
+            last_time = patient["timestamp"]
+            temp_dict = {"patient_id": patient["patient_id"],
+                         "last_heart_rate": last_heart_rate[-1],
+                         "last_time": last_time[-1],
+                         "status": patient["status"]}
+            patients_list.append(temp_dict)
+    return patients_list
 
 
 # Put all of the route functions below this line
