@@ -394,7 +394,8 @@ def test_find_first_time(time, times, expected):
                                 "attending_phone": "919-200-8973",
                                 "patients": []}], True),
                           ("Max.G", [],
-                           "The physician does not exist in database")])
+                           "The physician does not exist in database"),
+                          ("Zion.W", [], True)])
 def test_verify_attendant_exists(attending_username, db, expected):
     from heart_rate_server import verify_attendant_exists, attendant_db
     for attendant in db:
