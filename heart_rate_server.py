@@ -229,5 +229,10 @@ def get_patient_avg_heart_rate(patient_id):
     return jsonify(get_patient_average_heart_rate(patient_id, patient_db))
 
 
+@app.route("/api/status/<patient_id>", methods=["GET"])
+def get_status(patient_id):
+    return jsonify(get_patient_status(patient_id))
+
+
 if __name__ == '__main__':
     app.run()
