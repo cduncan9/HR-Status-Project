@@ -54,11 +54,11 @@ def get_avg_heart_rate():
     print(r.text)
 
 
-
 def get_patient_status():
     r = requests.get(server_name + "/api/status/3")
     print(r.text)
     r = requests.get(server_name + "/api/status/1")
+
 
 def get_interval_avg_hr():
     file = {"patient_id": 3,
