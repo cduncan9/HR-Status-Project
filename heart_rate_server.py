@@ -185,11 +185,13 @@ def get_patient_status(patient_id):
     for patient in patient_db:
         if patient["patient_id"] == patient_id:
             heart_rate = patient['heart_rate']
+            heart_rate = heart_rate[-1]
             status = patient['status']
             timestamp = patient['timestamp']
-            status_dict = {"heart_rate": heart_rate[-1],
+            timestamp = timestamp[-1]
+            status_dict = {"heart_rate": heart_rate,
                            "status": status,
-                           "timestamp": timestamp[-1]}
+                           "timestamp": timestamp}
             return status_dict
     return "Patient not found"
 
