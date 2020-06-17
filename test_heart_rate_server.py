@@ -538,3 +538,24 @@ def test_patients_for_attending_username(patient_id_list, pat_db, expected):
         patient_db.append(patient)
     answer = patients_for_attending_username(patient_id_list)
     assert answer == expected
+
+
+@pytest.mark.parametrize("in_dict, expected",
+                         [({"attending_username": "Smith.J",
+                            "attending_email":
+                                "dr_user_id@yourdomain.com",
+                            "attending_phone": "919-867-5309"}, True),
+                          ({"attending_username": "Smith.J",
+                            "attending_email": "dr_user_id@yourdomain.com",
+                            "attendingphone": "919-867-5309"},
+                           "attending_phone key not found in input"),
+                          ({"attending_username": "Smith.J",
+                            "attending_email":
+                                "dr_user_id@yourdomain.com",
+                            "attending_phone": 9198675309},
+                           "attending_phone value is not the correct type")
+                          ])
+def test_verify_new_attending(in_dict, expected):
+    from heart_rate_server import verify_new_attending
+    answer = verify_new_attending(in_dict)
+    assert answer == expected

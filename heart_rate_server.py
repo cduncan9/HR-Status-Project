@@ -237,6 +237,10 @@ def verify_new_attending(in_dict):
     return
 
 
+def verify_internal_average(in_dict):
+    return
+
+
 def verify_attendant_exists(attending_username):
     for attendant in attendant_db:
         if attendant["attending_username"] == attending_username:
@@ -288,6 +292,8 @@ def post_new_patient():
 def post_new_attending():
     in_dict = request.get_json()
     verify_input = verify_new_attending(in_dict)
+    if verify_input is not True:
+        return verify_input, 400
     print(add_attendant_to_db(read_attending(in_dict), attendant_db))
     logging.info("New attendant added... Username: " +
                  in_dict["attending_username"] + ", email: " +
@@ -338,6 +344,9 @@ def get_status(patient_id):
 @app.route("/api/heart_rate/interval_average", methods=["POST"])
 def post_interval_average():
     in_dict = request.get_json()
+    verify_input = verify_internal_average(in_dict)
+    if verify_input is not True:
+        return verify_input, 400
     print(in_dict)
     patient_id = in_dict["patient_id"]
     print(patient_id)
