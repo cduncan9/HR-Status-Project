@@ -170,11 +170,13 @@ def check_heart_rate(hr_info, timestamp):
     for patient in patient_db:
         if patient['patient_id'] == hr_info[0]:
             age = patient['patient_age']
-            if is_tachycardic(age, hr_info[1]):
-                message_sent = send_email(hr_info, timestamp)
-                patient['status'] = 'tachycardic'
-                return message_sent
-            patient['status'] = 'not tachycardic'
+            patient["status"] = "not tachycardic"
+    if is_tachycardic(age, hr_info[1]):
+        message_sent = send_email(hr_info, timestamp)
+        for patient in patient_db:
+            if patient['patient_id'] == hr_info[0]:
+                patient["status"] = "tachycardic"
+        return message_sent
     return True
 
 
