@@ -290,7 +290,8 @@ def post_interval_average():
 
 @app.route("/api/patients/<attending_username>", methods=["GET"])
 def get_patients_for_attending_username(attending_username):
-    return jsonify(patients_for_attending_username(attending_username))
+    patient_id_list = get_patient_id_list
+    return jsonify(patients_for_attending_username(patient_id_list))
 
 
 if __name__ == '__main__':
