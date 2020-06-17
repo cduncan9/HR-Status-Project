@@ -57,6 +57,18 @@ def check_bad_input(input):
 
 
 def read_attending(in_dict):
+    '''Reads in attendant information from input dictionary
+
+    The attendant information is input in a dictionary in the following
+    format:
+    {"attending_username": "Smith.J",
+     "attending_email": "dr_user_id@yourdomain.com",
+     "attending_phone": "919-867-5309}
+    This function extracts each value from the dictionary
+
+    :param in_dict: Dictionary containing attendant info
+    :return: list containing attendant info
+    '''
     user = in_dict["attending_username"]
     email = in_dict["attending_email"]
     phone = in_dict["attending_phone"]
@@ -64,6 +76,18 @@ def read_attending(in_dict):
 
 
 def read_patient(in_dict):
+    '''Reads in patient information from input dictionary
+
+    The attendant information is input in a dictionary in the following
+    format:
+    {"patient_id": 1, # usually this would be the patient MRN
+     "attending_username": "Smith.J",
+     "patient_age": 50, # in years}
+    This function extracts each value from the dictionary
+
+    :param in_dict: dictionary containing patient info
+    :return: list containing patient info
+    '''
     patient = in_dict["patient_id"]
     user = in_dict["attending_username"]
     age = in_dict["patient_age"]
@@ -75,6 +99,14 @@ def read_patient(in_dict):
 
 
 def add_patient_to_db(info):
+    '''Creates a patient dictionary and adds it to database
+
+    Patient info is input as a list and dictionary is created
+    containing all the required keys specified on GitHub which
+    is then added to the global patient database variable
+
+    :param info: list containing patient info
+    '''
     new_patient_dict = {"patient_id": info[0], "attending_username": info[1],
                         "patient_age": info[2], "heart_rate": list(),
                         "timestamp": list(), "status": ""}
@@ -82,6 +114,15 @@ def add_patient_to_db(info):
 
 
 def add_attendant_to_db(info, db):
+    '''Creates an attendant dictionary and adds it to database
+
+    Attendant info is input as a list and dictionary is created
+    containing all the required keys specified on GitHub which
+    is then added to the global attendant database variable
+
+    :param info: list containing attendant info
+    :param db: list containing attendant dictionaries
+    '''
     new_attendant_dict = {"attending_username": info[0],
                           "attending_email": info[1],
                           "attending_phone": info[2],
