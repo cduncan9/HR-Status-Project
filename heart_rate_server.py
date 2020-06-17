@@ -273,7 +273,7 @@ def get_patient_avg_heart_rate(patient_id):
 def get_status(patient_id):
     return jsonify(get_patient_status(patient_id))
 
-  
+
 @app.route("/api/heart_rate/interval_average", methods=["POST"])
 def post_interval_average():
     in_dict = request.get_json()
