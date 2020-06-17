@@ -234,7 +234,14 @@ def patients_for_attending_username(patient_id_list):
 
 # Verification functions under this line
 def verify_new_attending(in_dict):
-    return
+    expected_keys = ("attending_username", "attending_email", "attending_phone")
+    expected_values = (str, str, str)
+    for key, ty in zip(expected_keys, expected_values):
+        if key not in in_dict.keys():
+            return "{} key not found in input".format(key)
+        if type(in_dict[key]) != ty:
+            return "{} value is not the correct type".format(key)
+    return True
 
 
 def verify_internal_average(in_dict):
