@@ -227,6 +227,24 @@ def test_get_patient_heart_rates():
     assert answer == expected
 
 
+def test_find_patient():
+    from heart_rate_server import find_patient
+    dict = [{"patient_id": 1,
+             "attending_username": 'Therien.A',
+             "patient_age": 21, "heart_rate": list(),
+             "timestamp": list(), "status": ""},
+            {"patient_id": 2,
+             "attending_username": 'Duncan.C',
+             "patient_age": 21, "heart_rate": list(),
+             "timestamp": list(), "status": ""}]
+    expected = {"patient_id": 1,
+                "attending_username": 'Therien.A',
+                "patient_age": 21, "heart_rate": list(),
+                "timestamp": list(), "status": ""}
+    answer = find_patient(1, dict)
+    assert answer == expected
+
+
 def test_current_time():
     from heart_rate_server import current_time
     time_input = datetime(2018, 3, 9, 11, 0, 36)

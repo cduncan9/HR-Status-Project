@@ -119,10 +119,12 @@ def get_patient_heart_rates(patient_id, db):
     return "Patient not found", 400
 
 
-def find_patient(patient_id):
-    for patient in patient_db:
-        if patient["patient_id"] == patient_id:
-            return patient
+def find_patient(patient_id, db):
+    for patient in db:
+        print(patient_id)
+        print(patient["patient_id"])
+        if patient["patient_id"] == str(patient_id):
+            return patient["timestamp"]
     return "Patient not found", 400
 
 
@@ -252,6 +254,7 @@ def get_patient_avg_heart_rate(patient_id):
 def get_interval_average():
     in_dict = request.get_json()
     patient_id = in_dict["patient_id"]
+    print(patient_id)
     time = in_dict["heart_rate_average_since"]
     patient = find_patient(patient_id)
     index = find_first_time(time, patient["timestamp"])
