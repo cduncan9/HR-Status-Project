@@ -73,7 +73,7 @@ def test_read_attending(data, expected):
                              "attending_phone": "287-987-0098",
                              "patients": [20]}],
                            True)])
-def test_read_attending(info, db, expected):
+def test_add_patient_to_attendant_db(info, db, expected):
     from heart_rate_server import add_patient_to_attendant_db
     answer = add_patient_to_attendant_db(info, db)
     assert answer == expected
@@ -99,7 +99,7 @@ def test_read_attending(info, db, expected):
                              "attending_email": "canyon@duke.edu",
                              "attending_phone": "919-200-8973",
                              "patients": []}])])
-def test_read_attending(info, db, expected):
+def test_add_attendant_to_db(info, db, expected):
     from heart_rate_server import add_attendant_to_db
     answer = add_attendant_to_db(info, db)
     assert answer == expected
