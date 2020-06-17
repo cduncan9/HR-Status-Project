@@ -178,6 +178,16 @@ def find_first_time(time_input, data):
 
 
 def get_patient_heart_rates(patient_id, db):
+    '''Returns list of patient heart rate data
+
+    This method takes in the patient ID and patient database and
+    outputs the list of the specified patient's heart rate data.
+
+    :param patient_id: int containing patient ID
+    :param db: list of patient dictionaries
+    :return: list of patient heart rate data, str "Patient not found" and error 400
+             if not found
+    '''
     for patient in db:
         if patient_id == str(patient["patient_id"]):
             return patient["heart_rate"]
@@ -185,6 +195,16 @@ def get_patient_heart_rates(patient_id, db):
 
 
 def find_patient(patient_id, db):
+    '''Returns specified patient dictionary
+
+    This method takes in the patient ID and patient database and
+    outputs the dictionary containing the specified patient's info.
+
+    :param patient_id: int containing patient ID
+    :param db: list of patient dictionaries
+    :return: dictionary of patient data, str "Patient not found" and
+             error 400 if patient not found
+    '''
     for patient in db:
         if patient["patient_id"] == patient_id:
             return patient
@@ -192,6 +212,16 @@ def find_patient(patient_id, db):
 
 
 def get_patient_average_heart_rate(patient_id, db):
+    '''Returns the average of the patient's heart rate data
+
+    This method takes in the patient ID and patient database and
+    outputs the specified patient's average heart rate.
+
+    :param patient_id: int containing patient ID
+    :param db: list of patient dictionaries
+    :return: int containing patient's average heart rate data,
+             str "Patient not found" and error 400 if not found
+    '''
     data = get_patient_heart_rates(patient_id, db)
     if type(data) is not list:
         return "Patient not found", 400
@@ -200,6 +230,14 @@ def get_patient_average_heart_rate(patient_id, db):
 
 
 def read_heart_rate_info(in_dict):
+    '''Reads in patient ID and heart rate
+
+    A patient dictionary is input into this function and the
+    patient id and heart rate data are output in a list
+
+    :param in_dict: dictionary containing patient data
+    :return: list containing patient ID and list of heart rates
+    '''
     patient_id = in_dict['patient_id']
     heart_rate = in_dict['heart_rate']
     if type(patient_id) == str:
@@ -210,6 +248,17 @@ def read_heart_rate_info(in_dict):
 
 
 def add_heart_rate_to_patient_db(hr_info, timestamp):
+    '''Adds patient heart rate to database
+
+    Takes in patient heart rate info and timestamp and adds
+    heart rate data and timestamp to patient's dictionary
+
+    :param hr_info: list containing patient ID and heart rate data point
+    :param timestamp: str containing timestamp following format on GitHub
+
+    :return: True if patient found and info added,
+             str "Error in adding hear rate info to database" otherwise
+    '''
     pat_id = hr_info[0]
     pat_hr = hr_info[1]
     global patient_db
@@ -222,12 +271,23 @@ def add_heart_rate_to_patient_db(hr_info, timestamp):
 
 
 def current_time(time_input):
+    '''Turns input datetime object into a string
+
+    :param time_input: datetime object
+    :return: str of datetime object
+    '''
     # How can we test this
     time_string = datetime.strftime(time_input, "%Y-%m-%d %H:%M:%S")
     return time_string
 
 
 def find_physician_email(patient_id):
+    '''Finds patient's physician email
+
+    :param patient_id: int containing patient ID
+    :return: str containing attendant email if attendant found,
+             False otherwise
+    '''
     for attendant in attendant_db:
         if patient_id in attendant["patients"]:
             return attendant["attending_email"]
@@ -235,6 +295,17 @@ def find_physician_email(patient_id):
 
 
 def send_email(hr_info, timestamp):
+    '''Sends email using server to attendant if patient is tachycardic
+
+    If a tachycardic event occurs to a patient, this method creates and sends an
+    email to that patient's attendant saying they have tachycardia.
+
+    :param hr_info: list containing patient ID and heart rate data point
+    :param timestamp: str containing timestamp
+
+    :return: str containing email text if email sent,
+             str "Physician not in database" error 400 otherwise
+    '''
     # this email will make the POST request to email the physician
     server = "http://vcm-7631.vm.duke.edu:5007/hrss/send_email"
     email_content = ("Your patient with the patient_id number {} "
