@@ -98,10 +98,31 @@ def verify_heart_rate_post(in_dict):
     return True
 
 
+def find_first_time(time_input, data):
+    ref_time = datetime.strptime(time_input, "%Y-%m-%d %H:%M:%S")
+    count = 0
+    for time in data:
+        temp = datetime.strptime(time, "%Y-%m-%d %H:%M:%S")
+        delta = ref_time-temp
+        if delta.total_seconds() <= 0:
+            return count
+        elif count == len(data):
+            return "Time out of bounds"
+        else:
+            count = count + 1
+
+
 def get_patient_heart_rates(patient_id, db):
     for patient in db:
         if patient_id == str(patient["patient_id"]):
             return patient["heart_rate"]
+    return "Patient not found", 400
+
+
+def find_patient(patient_id, db):
+    for patient in db:
+        if patient["patient_id"] == patient_id:
+            return patient
     return "Patient not found", 400
 
 
@@ -208,6 +229,7 @@ def post_new_patient():
     flag = add_patient_to_attendant_db(patient_info, attendant_db)
     if flag:
         return "Attendant does not exist", 400
+    print(patient_db)
     return "Patient information stored", 200
 
 
@@ -250,6 +272,20 @@ def get_patient_avg_heart_rate(patient_id):
 @app.route("/api/status/<patient_id>", methods=["GET"])
 def get_status(patient_id):
     return jsonify(get_patient_status(patient_id))
+
+  
+@app.route("/api/heart_rate/interval_average", methods=["POST"])
+def post_interval_average():
+    in_dict = request.get_json()
+    print(in_dict)
+    patient_id = in_dict["patient_id"]
+    print(patient_id)
+    time = in_dict["heart_rate_average_since"]
+    patient = find_patient(patient_id, patient_db)
+    index = find_first_time(time, patient["timestamp"])
+    answer = sum(patient["heart_rate"]
+                 [index:]) / len(patient["heart_rate"][index:])
+    return jsonify(answer)
 
 
 if __name__ == '__main__':

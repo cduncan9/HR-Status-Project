@@ -227,6 +227,24 @@ def test_get_patient_heart_rates():
     assert answer == expected
 
 
+def test_find_patient():
+    from heart_rate_server import find_patient
+    dict = [{"patient_id": 1,
+             "attending_username": 'Therien.A',
+             "patient_age": 21, "heart_rate": list(),
+             "timestamp": list(), "status": ""},
+            {"patient_id": 2,
+             "attending_username": 'Duncan.C',
+             "patient_age": 21, "heart_rate": list(),
+             "timestamp": list(), "status": ""}]
+    expected = {"patient_id": 1,
+                "attending_username": 'Therien.A',
+                "patient_age": 21, "heart_rate": list(),
+                "timestamp": list(), "status": ""}
+    answer = find_patient(1, dict)
+    assert answer == expected
+
+
 def test_current_time():
     from heart_rate_server import current_time
     time_input = datetime(2018, 3, 9, 11, 0, 36)
@@ -319,4 +337,25 @@ def test_get_patient_status(patient_id, db, expected):
     for patient in db:
         patient_db.append(patient)
     answer = get_patient_status(patient_id)
+
+
+@pytest.mark.parametrize("time, times, expected",
+                         [("2018-03-09 11:00:36",
+                          ["2018-03-09 10:00:36", "2018-03-09 11:00:36",
+                           "2018-03-09 11:00:36"],
+                           1),
+                          ("2018-03-09 11:00:36",
+                           ["2018-03-09 10:00:36", "2018-03-09 11:00:25",
+                            "2018-03-09 11:00:37", "2018-03-09 11:00:38"],
+                           2),
+                          ("2018-03-09 11:00:36",
+                           ["2018-03-09 11:00:36"],
+                           0),
+                          ("2018-03-09 11:00:36",
+                           ["2018-03-09 11:00:16", "2018-03-09 11:00:26",
+                            "2018-03-09 11:00:36"],
+                           2)])
+def test_find_first_time(time, times, expected):
+    from heart_rate_server import find_first_time
+    answer = find_first_time(time, times)
     assert answer == expected
