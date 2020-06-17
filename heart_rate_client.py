@@ -59,7 +59,7 @@ def get_interval_avg_hr():
             "heart_rate_average_since": "2020-06-16 9:56:00"
             }
     r = requests.post(server_name +
-                     "/api/heart_rate/interval_average", json=file)
+                      "/api/heart_rate/interval_average", json=file)
     print(r.text)
 
 
