@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from datetime import datetime
 import requests
+import logging
 
 patient_db = list()
 attendant_db = list()
@@ -273,6 +274,8 @@ def post_new_patient():
     if flag:
         return "Attendant does not exist", 400
     print(patient_db)
+    logging.info("New patient added... " + "Patient ID: " +
+                 str(in_dict["patient_id"]) + "\n")
     return "Patient information stored", 200
 
 
@@ -280,6 +283,9 @@ def post_new_patient():
 def post_new_attending():
     in_dict = request.get_json()
     print(add_attendant_to_db(read_attending(in_dict), attendant_db))
+    logging.info("New attendant added... Username: " +
+                 in_dict["attending_username"] + ", email: " +
+                 in_dict["attending_email"] + "\n")
     return "Attendant information stored", 200
 
 
@@ -297,6 +303,12 @@ def post_heart_rate():
         return add_heart_rate, 400
     check_tachycardic = check_heart_rate(hr_info, timestamp)
     if check_tachycardic is not True:
+        patient = find_patient(hr_info[0], patient_db)
+        logging.info("Tachycardic Heart Beat Detected..." +
+                     "Patient ID: " + str(hr_info[0]) + ", " +
+                     "Heart Rate: " + str(hr_info[1]) + ", " +
+                     "Attending Physician: " +
+                     patient["attending_username"] + "\n")
         return check_tachycardic, 200
     print(patient_db)
     return "Heart rate information is stored", 200
@@ -341,4 +353,6 @@ def get_patients_for_attending_username(attending_username):
 
 
 if __name__ == '__main__':
+    logging.basicConfig(filename="code_status.log", filemode='w',
+                        level=logging.DEBUG)
     app.run()
