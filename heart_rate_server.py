@@ -119,6 +119,13 @@ def get_patient_heart_rates(patient_id, db):
     return "Patient not found", 400
 
 
+def find_patient(patient_id):
+    for patient in patient_db:
+        if patient["patient_id"] == patient_id:
+            return patient
+    return "Patient not found", 400
+
+
 def get_patient_average_heart_rate(patient_id, db):
     data = get_patient_heart_rates(patient_id, db)
     if type(data) is not list:
@@ -239,6 +246,16 @@ def get_patient_heart_data(patient_id):
 @app.route("/api/heart_rate/average/<patient_id>", methods=["GET"])
 def get_patient_avg_heart_rate(patient_id):
     return jsonify(get_patient_average_heart_rate(patient_id, patient_db))
+
+
+@app.route("/api/heart_rate/interval_average", methods=["POST"])
+def get_interval_average():
+    in_dict = request.get_json()
+    patient_id = in_dict["patient_id"]
+    time = in_dict["heart_rate_average_since"]
+    patient = find_patient(patient_id)
+    index = find_first_time(time, patient["timestamp"])
+    return jsonify(sum(patient["heart_rate"][index:]) / len(patient["heart_rate"][index:]))
 
 
 if __name__ == '__main__':
