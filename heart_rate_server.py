@@ -191,10 +191,30 @@ def check_heart_rate(hr_info, timestamp):
     for patient in patient_db:
         if patient['patient_id'] == hr_info[0]:
             age = patient['patient_age']
+            patient["status"] = "not tachycardic"
     if is_tachycardic(age, hr_info[1]):
         message_sent = send_email(hr_info, timestamp)
+        for patient in patient_db:
+            if patient['patient_id'] == hr_info[0]:
+                patient["status"] = "tachycardic"
         return message_sent
     return True
+
+
+def get_patient_status(patient_id):
+    patient_id = int(patient_id)
+    for patient in patient_db:
+        if patient["patient_id"] == patient_id:
+            heart_rate = patient['heart_rate']
+            heart_rate = heart_rate[-1]
+            status = patient['status']
+            timestamp = patient['timestamp']
+            timestamp = timestamp[-1]
+            status_dict = {"heart_rate": heart_rate,
+                           "status": status,
+                           "timestamp": timestamp}
+            return status_dict
+    return "Patient not found"
 
 
 # Put all of the route functions below this line
@@ -247,6 +267,11 @@ def get_patient_heart_data(patient_id):
 @app.route("/api/heart_rate/average/<patient_id>", methods=["GET"])
 def get_patient_avg_heart_rate(patient_id):
     return jsonify(get_patient_average_heart_rate(patient_id, patient_db))
+
+
+@app.route("/api/status/<patient_id>", methods=["GET"])
+def get_status(patient_id):
+    return jsonify(get_patient_status(patient_id))
 
 
 @app.route("/api/heart_rate/interval_average", methods=["POST"])

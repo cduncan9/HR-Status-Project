@@ -22,7 +22,7 @@ def add_new_patient():
 
 
 def add_heart_rate():
-    new_heart_rate = {"patient_id": 3, "heart_rate": 110}
+    new_heart_rate = {"patient_id": 1, "heart_rate": 90}
     new_heart_rate2 = {"patient_id": 3, "heart_rate": 150}
     r = requests.post(server_name+"/api/heart_rate", json=new_heart_rate)
     r2 = requests.post(server_name + "/api/heart_rate", json=new_heart_rate2)
@@ -54,6 +54,12 @@ def get_avg_heart_rate():
     print(r.text)
 
 
+def get_patient_status():
+    r = requests.get(server_name + "/api/status/3")
+    print(r.text)
+    r = requests.get(server_name + "/api/status/1")
+
+
 def get_interval_avg_hr():
     file = {"patient_id": 3,
             "heart_rate_average_since": "2020-06-16 9:56:00"
@@ -67,4 +73,7 @@ if __name__ == '__main__':
     add_new_attendant()
     add_new_patient()
     add_heart_rate()
+    get_heart_rate()
+    get_avg_heart_rate()
+    get_patient_status()
     get_interval_avg_hr()
