@@ -51,17 +51,6 @@ def read_patient(in_dict):
     return [patient, user, age]
 
 
-def verify_new_patient_info(in_dict):
-    expected_keys = ("patient_id", "attending_username", "patient_age")
-    expected_values = (int, str, int)
-    for key, ty in zip(expected_keys, expected_values):
-        if key not in in_dict.keys():
-            return "{} key not found in input".format(key)
-        if type(in_dict[key]) != ty and check_bad_input(in_dict[key]):
-            return "{} value is not the correct type".format(key)
-    return True
-
-
 def add_patient_to_db(info):
     new_patient_dict = {"patient_id": info[0], "attending_username": info[1],
                         "patient_age": info[2], "heart_rate": list(),
@@ -85,17 +74,6 @@ def add_patient_to_attendant_db(info, db):
         if attendant["attending_username"] == attendant_name:
             attendant["patients"].append(patient_id)
             return False
-    return True
-
-
-def verify_heart_rate_post(in_dict):
-    expected_keys = ("patient_id", "heart_rate")
-    expected_values = (int, int)
-    for key, ty in zip(expected_keys, expected_values):
-        if key not in in_dict.keys():
-            return "{} key not found in input".format(key)
-        if type(in_dict[key]) != ty and check_bad_input(in_dict[key]):
-            return "{} value is not the correct type".format(key)
     return True
 
 
@@ -226,13 +204,6 @@ def get_patient_status(patient_id):
     return "Patient not found"
 
 
-def verify_attendant_exists(attending_username):
-    for attendant in attendant_db:
-        if attendant["attending_username"] == attending_username:
-            return True
-    return "The physician does not exist in database"
-
-
 def get_patient_id_list(attending_username):
     for attendant in attendant_db:
         if attendant["attending_username"] == attending_username:
@@ -261,6 +232,59 @@ def patients_for_attending_username(patient_id_list):
     return patients_list
 
 
+# Verification functions under this line
+def verify_new_attending(in_dict):
+    expected_keys = ("attending_username", "attending_email",
+                     "attending_phone")
+    expected_values = (str, str, str)
+    for key, ty in zip(expected_keys, expected_values):
+        if key not in in_dict.keys():
+            return "{} key not found in input".format(key)
+        if type(in_dict[key]) != ty:
+            return "{} value is not the correct type".format(key)
+    return True
+
+
+def verify_internal_average(in_dict):
+    expected_keys = ("patient_id", "heart_rate_average_since")
+    expected_values = (int, str)
+    for key, ty in zip(expected_keys, expected_values):
+        if key not in in_dict.keys():
+            return "{} key not found in input".format(key)
+        if type(in_dict[key]) != ty and check_bad_input(in_dict[key]):
+            return "{} value is not the correct type".format(key)
+    return True
+
+
+def verify_attendant_exists(attending_username):
+    for attendant in attendant_db:
+        if attendant["attending_username"] == attending_username:
+            return True
+    return "The physician does not exist in database"
+
+
+def verify_heart_rate_post(in_dict):
+    expected_keys = ("patient_id", "heart_rate")
+    expected_values = (int, int)
+    for key, ty in zip(expected_keys, expected_values):
+        if key not in in_dict.keys():
+            return "{} key not found in input".format(key)
+        if type(in_dict[key]) != ty and check_bad_input(in_dict[key]):
+            return "{} value is not the correct type".format(key)
+    return True
+
+
+def verify_new_patient_info(in_dict):
+    expected_keys = ("patient_id", "attending_username", "patient_age")
+    expected_values = (int, str, int)
+    for key, ty in zip(expected_keys, expected_values):
+        if key not in in_dict.keys():
+            return "{} key not found in input".format(key)
+        if type(in_dict[key]) != ty and check_bad_input(in_dict[key]):
+            return "{} value is not the correct type".format(key)
+    return True
+
+
 # Put all of the route functions below this line
 @app.route("/api/new_patient", methods=["POST"])
 def post_new_patient():
@@ -282,6 +306,9 @@ def post_new_patient():
 @app.route("/api/new_attending", methods=["POST"])
 def post_new_attending():
     in_dict = request.get_json()
+    verify_input = verify_new_attending(in_dict)
+    if verify_input is not True:
+        return verify_input, 400
     print(add_attendant_to_db(read_attending(in_dict), attendant_db))
     logging.info("New attendant added... Username: " +
                  in_dict["attending_username"] + ", email: " +
@@ -332,11 +359,14 @@ def get_status(patient_id):
 @app.route("/api/heart_rate/interval_average", methods=["POST"])
 def post_interval_average():
     in_dict = request.get_json()
+    verify_input = verify_internal_average(in_dict)
+    if verify_input is not True:
+        return verify_input, 400
     print(in_dict)
     patient_id = in_dict["patient_id"]
     print(patient_id)
     time = in_dict["heart_rate_average_since"]
-    patient = find_patient(patient_id, patient_db)
+    patient = find_patient(int(patient_id), patient_db)
     index = find_first_time(time, patient["timestamp"])
     answer = sum(patient["heart_rate"]
                  [index:]) / len(patient["heart_rate"][index:])
