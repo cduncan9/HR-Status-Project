@@ -359,3 +359,32 @@ def test_find_first_time(time, times, expected):
     from heart_rate_server import find_first_time
     answer = find_first_time(time, times)
     assert answer == expected
+
+
+@pytest.mark.parametrize("attending_username, db, expected",
+                         [("Canyon.D",
+                           [{"attending_username": "Aidan.T",
+                             "attending_email": "aidan@duke.edu",
+                             "attending_phone": "919-200-8973",
+                             "patients": [500, 501]},
+                            {"attending_username": "Canyon.D",
+                             "attending_email": "canyon@duke.edu",
+                             "attending_phone": "919-200-8973",
+                             "patients": [502]},
+                            {"attending_username": "Bob.D",
+                                "attending_email": "robert@duke.edu",
+                                "attending_phone": "919-200-8973",
+                                "patients": [503, 504, 505]},
+                            {"attending_username": "Zion.W",
+                                "attending_email": "Zion@duke.edu",
+                                "attending_phone": "919-200-8973",
+                                "patients": []}], True),
+                          ("Max.G", [],
+                           "The physician does not exist in database")])
+def test_verify_attendant_exists(attending_username, db, expected):
+    from heart_rate_server import verify_attendant_exists, attendant_db
+    for attendant in db:
+        attendant_db.append(attendant)
+    answer = verify_attendant_exists(attending_username)
+    assert answer == expected
+

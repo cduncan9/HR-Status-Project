@@ -217,6 +217,18 @@ def get_patient_status(patient_id):
     return "Patient not found"
 
 
+def verify_attendant_exists(attending_username):
+    return
+
+
+def get_patient_id_list(attending_username):
+    return
+
+
+def patients_for_attending_username(patient_id_list):
+    return
+
+
 # Put all of the route functions below this line
 @app.route("/api/new_patient", methods=["POST"])
 def post_new_patient():
@@ -290,7 +302,10 @@ def post_interval_average():
 
 @app.route("/api/patients/<attending_username>", methods=["GET"])
 def get_patients_for_attending_username(attending_username):
-    patient_id_list = get_patient_id_list
+    verify_attendant = verify_attendant_exists(attending_username)
+    if verify_attendant is not True:
+        return verify_attendant, 400
+    patient_id_list = get_patient_id_list(attending_username)
     return jsonify(patients_for_attending_username(patient_id_list))
 
 
