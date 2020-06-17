@@ -58,5 +58,3 @@ if __name__ == '__main__':
     add_new_attendant()
     add_new_patient()
     add_heart_rate()
-    get_heart_rate()
-    get_avg_heart_rate()

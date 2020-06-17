@@ -98,6 +98,20 @@ def verify_heart_rate_post(in_dict):
     return True
 
 
+def find_first_time(time_input, data):
+    ref_time = datetime.strptime(time_input, "%Y-%m-%d %H:%M:%S")
+    count = 0
+    for time in data:
+        temp = datetime.strptime(time, "%Y-%m-%d %H:%M:%S")
+        delta = ref_time-temp
+        if delta.total_seconds >= 0:
+            return count
+        elif count == len(data):
+            return "Time out of bounds"
+        else:
+            count = count + 1
+
+
 def get_patient_heart_rates(patient_id, db):
     for patient in db:
         if patient_id == str(patient["patient_id"]):
