@@ -209,6 +209,7 @@ def post_new_patient():
     flag = add_patient_to_attendant_db(patient_info, attendant_db)
     if flag:
         return "Attendant does not exist", 400
+    print(patient_db)
     return "Patient information stored", 200
 
 
@@ -249,12 +250,13 @@ def get_patient_avg_heart_rate(patient_id):
 
 
 @app.route("/api/heart_rate/interval_average", methods=["POST"])
-def get_interval_average():
+def post_interval_average():
     in_dict = request.get_json()
+    print(in_dict)
     patient_id = in_dict["patient_id"]
     print(patient_id)
     time = in_dict["heart_rate_average_since"]
-    patient = find_patient(patient_id)
+    patient = find_patient(patient_id, patient_db)
     index = find_first_time(time, patient["timestamp"])
     answer = sum(patient["heart_rate"]
                  [index:]) / len(patient["heart_rate"][index:])
