@@ -350,10 +350,15 @@ def check_heart_rate(hr_info, timestamp):
 
 
 def get_patient_status(patient_id):
-    '''
-    
-    :param patient_id:
-    :return:
+    '''Outputs dictionary containing patient status
+
+    This function takes in a patinent ID, finds them in the patient
+    database, and builds a containing the status information which
+    is then output.
+
+    :param patient_id: int containing patient ID
+    :return: dictionary of patient status if patient found,
+             str "Patient not found" if patient not found
     '''
     patient_id = int(patient_id)
     for patient in patient_db:
@@ -377,12 +382,30 @@ def get_patient_status(patient_id):
 
 
 def get_patient_id_list(attending_username):
+    '''Returns attendant's list of patients
+
+    :param attending_username: str containing attendant username
+    :return: list of ints containing patient IDs
+    '''
     for attendant in attendant_db:
         if attendant["attending_username"] == attending_username:
             return attendant["patients"]
 
 
 def patients_for_attending_username(patient_id_list):
+    '''Takes in list of patients and builds a list of dictionaries
+
+    Builds list of dictionaries of the following format:
+    {"patient_id": patient["patient_id"],
+     "last_heart_rate": last_heart_rate,
+     "last_time": last_time,
+     "status": patient["status"]}
+     from an input list of integers containing patient IDs
+
+    :param patient_id_list: list of ints containing patient IDs
+    :return: list of dictionaries containing patient info
+             in the above format
+    '''
     patients_list = list()
     for patient in patient_db:
         if patient["patient_id"] in patient_id_list:
