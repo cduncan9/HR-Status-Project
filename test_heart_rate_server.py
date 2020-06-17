@@ -272,7 +272,9 @@ def test_current_time():
                                {"attending_username": "Aidan.T",
                                 "attending_email": "aidan@duke.edu",
                                 "attending_phone": "919-200-8973",
-                                "patients": [2]}], "canyon@duke.edu")])
+                                "patients": [2]}], "canyon@duke.edu"),
+                          (2, [], "aidan@duke.edu"),
+                          (315, [], False)])
 def test_find_physician_email(patient_id, db, expected):
     from heart_rate_server import find_physician_email, attendant_db
     for attendant in db:
