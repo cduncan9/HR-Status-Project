@@ -388,3 +388,29 @@ def test_verify_attendant_exists(attending_username, db, expected):
     answer = verify_attendant_exists(attending_username)
     assert answer == expected
 
+
+@pytest.mark.parametrize("attending_username, db, expected",
+                         [("Bob.D",
+                        [{"attending_username": "Aidan.T",
+                          "attending_email": "aidan@duke.edu",
+                          "attending_phone": "919-200-8973",
+                          "patients": [500, 501]},
+                         {"attending_username": "Canyon.D",
+                          "attending_email": "canyon@duke.edu",
+                          "attending_phone": "919-200-8973",
+                          "patients": [502]},
+                         {"attending_username": "Bob.D",
+                          "attending_email": "robert@duke.edu",
+                          "attending_phone": "919-200-8973",
+                          "patients": [503, 504, 505]},
+                         {"attending_username": "Zion.W",
+                          "attending_email": "Zion@duke.edu",
+                          "attending_phone": "919-200-8973",
+                          "patients": []}], [503, 504, 505]),
+                          ("Zion.W", [], [])])
+def test_get_patient_id_list(attending_username, db, expected):
+    from heart_rate_server import get_patient_id_list, attendant_db
+    for attendant in db:
+        attendant_db.append(attendant)
+    answer = get_patient_id_list(attending_username)
+    assert answer == expected
