@@ -132,6 +132,17 @@ def add_attendant_to_db(info, db):
 
 
 def add_patient_to_attendant_db(info, db):
+    '''Adds patient ID to corresponding attendant's list of patients
+
+    This method looks through the list of attendant dictionaries for
+    the input patient's attendant. If the attendant is found the patient's
+    ID is appended to the attendant's list of patients.
+
+    :param info: list of patient info
+    :param db: list of attendant dictionaries
+    :return: False if patient's attendant is found, True if patients's
+             attendant not found
+    '''
     patient_id = info[0]
     attendant_name = info[1]
     for attendant in db:
@@ -142,6 +153,17 @@ def add_patient_to_attendant_db(info, db):
 
 
 def find_first_time(time_input, data):
+    '''Finds first time in list of timestamps equal to or after input timestamp
+
+    This method is used for the interval average route. The first index of the
+    heart rate data list that occurs at or after the input timestamp must be found.
+    This function finds that index.
+
+    :param time_input: datetime object containing input timestamp
+    :param data: list of patient heart rate timestamps
+
+    :return: int containing first index of interval
+    '''
     ref_time = datetime.strptime(time_input, "%Y-%m-%d %H:%M:%S")
     count = 0
     for time in data:
