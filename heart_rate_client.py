@@ -1,4 +1,5 @@
 import requests
+from datetime import datetime
 
 server_name = "http://127.0.0.1:5000"
 
@@ -23,13 +24,28 @@ def add_new_patient():
 
 def add_heart_rate():
     new_heart_rate = {"patient_id": 1, "heart_rate": 90}
-    new_heart_rate2 = {"patient_id": 2, "heart_rate": 60}
+    new_heart_rate4 = {"patient_id": 2, "heart_rate": 60}
+    new_heart_rate2 = {"patient_id": 2, "heart_rate": 70}
+    new_heart_rate5 = {"patient_id": 2, "heart_rate": 65}
     new_heart_rate3 = {"patient_id": 3, "heart_rate": 150}
     r = requests.post(server_name+"/api/heart_rate", json=new_heart_rate)
+    print(r.text)
+    r = requests.post(server_name + "/api/heart_rate", json=new_heart_rate4)
+    print(r.text)
+    r = requests.post(server_name + "/api/heart_rate", json=new_heart_rate5)
     print(r.text)
     r = requests.post(server_name + "/api/heart_rate", json=new_heart_rate2)
     print(r.text)
     r = requests.post(server_name + "/api/heart_rate", json=new_heart_rate3)
+    print(r.text)
+
+
+def add_heart_rate2():
+    new_heart_rate = {"patient_id": 1, "heart_rate": 90}
+    new_heart_rate2 = {"patient_id": 1, "heart_rate": 60}
+    r = requests.post(server_name+"/api/heart_rate", json=new_heart_rate)
+    print(r.text)
+    r = requests.post(server_name + "/api/heart_rate", json=new_heart_rate2)
     print(r.text)
 
 
@@ -64,10 +80,11 @@ def get_patient_status():
     r = requests.get(server_name + "/api/status/1")
 
 
-def get_interval_avg_hr():
-    file = {"patient_id": 3,
-            "heart_rate_average_since": "2020-06-16 9:56:00"
+def get_interval_avg_hr(time):
+    file = {"patient_id": 1,
+            "heart_rate_average_since": time
             }
+    print(time)
     r = requests.post(server_name +
                       "/api/heart_rate/interval_average", json=file)
     print(r.text)
@@ -83,6 +100,8 @@ if __name__ == '__main__':
     add_new_patient()
     add_heart_rate()
     get_avg_heart_rate()
+    str_time = datetime.strftime(datetime.now(), "%Y-%m-%d %H:%M:%S")
     get_patient_status()
-    get_interval_avg_hr()
+    add_heart_rate2()
     get_patients_for_attending_username()
+    get_interval_avg_hr(str_time)
