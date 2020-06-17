@@ -121,10 +121,8 @@ def get_patient_heart_rates(patient_id, db):
 
 def find_patient(patient_id, db):
     for patient in db:
-        print(patient_id)
-        print(patient["patient_id"])
-        if patient["patient_id"] == str(patient_id):
-            return patient["timestamp"]
+        if patient["patient_id"] == patient_id:
+            return patient
     return "Patient not found", 400
 
 
