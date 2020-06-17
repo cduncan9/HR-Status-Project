@@ -234,7 +234,8 @@ def patients_for_attending_username(patient_id_list):
 
 # Verification functions under this line
 def verify_new_attending(in_dict):
-    expected_keys = ("attending_username", "attending_email", "attending_phone")
+    expected_keys = ("attending_username", "attending_email",
+                     "attending_phone")
     expected_values = (str, str, str)
     for key, ty in zip(expected_keys, expected_values):
         if key not in in_dict.keys():
@@ -245,7 +246,14 @@ def verify_new_attending(in_dict):
 
 
 def verify_internal_average(in_dict):
-    return
+    expected_keys = ("patient_id", "heart_rate_average_since")
+    expected_values = (int, str)
+    for key, ty in zip(expected_keys, expected_values):
+        if key not in in_dict.keys():
+            return "{} key not found in input".format(key)
+        if type(in_dict[key]) != ty and check_bad_input(in_dict[key]):
+            return "{} value is not the correct type".format(key)
+    return True
 
 
 def verify_attendant_exists(attending_username):
@@ -358,7 +366,7 @@ def post_interval_average():
     patient_id = in_dict["patient_id"]
     print(patient_id)
     time = in_dict["heart_rate_average_since"]
-    patient = find_patient(patient_id, patient_db)
+    patient = find_patient(int(patient_id), patient_db)
     index = find_first_time(time, patient["timestamp"])
     answer = sum(patient["heart_rate"]
                  [index:]) / len(patient["heart_rate"][index:])
