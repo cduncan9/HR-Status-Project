@@ -234,6 +234,23 @@ def patients_for_attending_username(patient_id_list):
 
 # Verification functions under this line
 def verify_new_attending(in_dict):
+    """
+    This function verifies the input information for post_new_attending()
+
+    This function receives the dictionary containing the input
+    from the function post_new_attending(). The function uses a for
+    loop to check if the key strings are the same as the expected
+    key strings and that the value types are the same as
+    the expected value types. If the keys are incorrect, then a
+    string notifying the client that a key is missing is returned.
+    If a value type is incorrect, then a string is returned
+    to the patient saying that a specific value is of the wrong type.
+    If nothing is wrong, then this function returns True.
+    :param in_dict: a dictionary sent from the client
+    :return: True if the dictionary has the correct keys and value
+    types and a string explaining why the dictionary is wrong
+    otherwise.
+    """
     expected_keys = ("attending_username", "attending_email",
                      "attending_phone")
     expected_values = (str, str, str)
@@ -246,6 +263,23 @@ def verify_new_attending(in_dict):
 
 
 def verify_internal_average(in_dict):
+    """This function verifies the input information for post_interval_average()
+
+    This function receives the dictionary containing the input
+    from the function post_interval_average(). The function uses a for
+    loop to check if the key strings are the same as the expected
+    key strings and that the value types are the same as
+    the expected value types. If the keys are incorrect, then a
+    string notifying the client that a key is missing is returned.
+    If a value type is incorrect, then the function
+    check_if_bad_input() is called to see if a value contains a
+    numeric string. If this too fails, then a string is returned
+    to the patient saying that a specific value is of the wrong type.
+    If nothing is wrong, then this function returns True.
+    :param in_dict: a dictionary sent from the client
+    :return: True if the dictionary has the correct keys and value
+    types and a string explaining why the dictionary is wrong
+    otherwise."""
     expected_keys = ("patient_id", "heart_rate_average_since")
     expected_values = (int, str)
     for key, ty in zip(expected_keys, expected_values):
@@ -257,6 +291,20 @@ def verify_internal_average(in_dict):
 
 
 def verify_attendant_exists(attending_username):
+    """
+    This function verifies that a dictionary with the
+    attending_username exists in attending_db
+
+    This function receives the attending_username as
+    input and uses a for loop to see if any of the stored
+    physician information in the attending_db has the
+    attending_username sent as the input. If there is one,
+    Then this function returns true. If not, then this function
+    returns a string notifying the client.
+    :param attending_username: the username of a physician
+    :return: True if a dictionary exists that has the
+    attending_username, or a string explaining otherwise
+    """
     for attendant in attendant_db:
         if attendant["attending_username"] == attending_username:
             return True
@@ -264,6 +312,23 @@ def verify_attendant_exists(attending_username):
 
 
 def verify_heart_rate_post(in_dict):
+    """This function verifies the input information for post_heart_rate()
+
+    This function receives the dictionary containing the input
+    from the function post_heart_rate(). The function uses a for
+    loop to check if the key strings are the same as the expected
+    key strings and that the value types are the same as
+    the expected value types. If the keys are incorrect, then a
+    string notifying the client that a key is missing is returned.
+    If a value type is incorrect, then the function
+    check_if_bad_input() is called to see if a value contains a
+    numeric string. If this too fails, then a string is returned
+    to the patient saying that a specific value is of the wrong type.
+    If nothing is wrong, then this function returns True.
+    :param in_dict: a dictionary sent from the client
+    :return: True if the dictionary has the correct keys and value
+    types and a string explaining why the dictionary is wrong
+    otherwise."""
     expected_keys = ("patient_id", "heart_rate")
     expected_values = (int, int)
     for key, ty in zip(expected_keys, expected_values):
@@ -275,6 +340,23 @@ def verify_heart_rate_post(in_dict):
 
 
 def verify_new_patient_info(in_dict):
+    """This function verifies the input information for post_new_patient()
+
+    This function receives the dictionary containing the input
+    from the function post_new_patient(). The function uses a for
+    loop to check if the key strings are the same as the expected
+    key strings and that the value types are the same as
+    the expected value types. If the keys are incorrect, then a
+    string notifying the client that a key is missing is returned.
+    If a value type is incorrect, then the function
+    check_if_bad_input() is called to see if a value contains a
+    numeric string. If this too fails, then a string is returned
+    to the patient saying that a specific value is of the wrong type.
+    If nothing is wrong, then this function returns True.
+    :param in_dict: a dictionary sent from the client
+    :return: True if the dictionary has the correct keys and value
+    types and a string explaining why the dictionary is wrong
+    otherwise."""
     expected_keys = ("patient_id", "attending_username", "patient_age")
     expected_values = (int, str, int)
     for key, ty in zip(expected_keys, expected_values):
