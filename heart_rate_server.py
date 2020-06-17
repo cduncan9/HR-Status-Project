@@ -178,6 +178,10 @@ def check_heart_rate(hr_info, timestamp):
     return True
 
 
+def get_patient_status(patient_id):
+    return
+
+
 # Put all of the route functions below this line
 @app.route("/api/new_patient", methods=["POST"])
 def post_new_patient():

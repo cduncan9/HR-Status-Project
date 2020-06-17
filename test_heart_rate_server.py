@@ -250,3 +250,65 @@ def test_find_physician_email(patient_id, db, expected):
         attendant_db.append(attendant)
     answer = find_physician_email(patient_id)
     assert answer == expected
+
+
+@pytest.mark.parametrize("patient_id, db, expected",
+                         [(2, [{"patient_id": 1,
+                                "attending_username": 'Therien.A',
+                                "patient_age": 21,
+                                "heart_rate": [70, 65],
+                                "timestamp": ['2020-03-09 11:00:36', '2020-03-10 11:00:36'],
+                                "status": "not tachycardic"},
+                               {"patient_id": 2,
+                                "attending_username": 'Duncan.C',
+                                "patient_age": 21,
+                                "heart_rate": [60, 150],
+                                "timestamp": ['2020-03-09 11:00:36', '2020-03-10 11:00:36'],
+                                "status": "tachycardic"},
+                               {"patient_id": 3,
+                                "attending_username": 'Bob.D',
+                                "patient_age": 40,
+                                "heart_rate": [90, 80],
+                                "timestamp": ['2020-03-09 11:00:36', '2020-03-10 11:00:36'],
+                                "status": "not tachycardic"},
+                               {"patient_id": 4,
+                                "attending_username": 'Williamson.Z',
+                                "patient_age": 19,
+                                "heart_rate": [70, 105],
+                                "timestamp": ['2020-03-09 11:00:36', '2020-03-10 11:00:36'],
+                                "status": "tachycardic"}],
+                           {"heart_rate": 150, "status": "tachycardic",
+                            "timestamp": '2020-03-10 11:00:36'}),
+                          (3, [{"patient_id": 1,
+                                "attending_username": 'Therien.A',
+                                "patient_age": 21,
+                                "heart_rate": [70, 65],
+                                "timestamp": ['2020-03-09 11:00:36', '2020-03-10 11:00:36'],
+                                "status": "not tachycardic"},
+                               {"patient_id": 2,
+                                "attending_username": 'Duncan.C',
+                                "patient_age": 21,
+                                "heart_rate": [60, 150],
+                                "timestamp": ['2020-03-09 11:00:36', '2020-03-10 11:00:36'],
+                                "status": "tachycardic"},
+                               {"patient_id": 3,
+                                "attending_username": 'Bob.D',
+                                "patient_age": 40,
+                                "heart_rate": [90, 80],
+                                "timestamp": ['2020-03-09 11:00:36', '2020-03-10 11:01:36'],
+                                "status": "not tachycardic"},
+                               {"patient_id": 4,
+                                "attending_username": 'Williamson.Z',
+                                "patient_age": 19,
+                                "heart_rate": [70, 105],
+                                "timestamp": ['2020-03-09 11:00:36', '2020-03-10 11:00:36'],
+                                "status": "tachycardic"}],
+                           {"heart_rate": 80, "status": "not tachycardic",
+                            "timestamp": '2020-03-10 11:01:36'}
+                           )])
+def test_get_patient_status(patient_id, db, expected):
+    from heart_rate_server import patient_db, get_patient_status
+    for patient in db:
+        patient_db.append(patient)
+    answer = get_patient_status(patient_id)
+    assert answer == expected
