@@ -206,15 +206,56 @@ def get_patient_status(patient_id):
     for patient in patient_db:
         if patient["patient_id"] == patient_id:
             heart_rate = patient['heart_rate']
-            heart_rate = heart_rate[-1]
+            if len(heart_rate) == 1:
+                heart_rate = heart_rate[0]
+            else:
+                heart_rate = heart_rate[-1]
             status = patient['status']
             timestamp = patient['timestamp']
-            timestamp = timestamp[-1]
+            if len(timestamp) == 1:
+                timestamp = timestamp[0]
+            else:
+                timestamp = timestamp[-1]
             status_dict = {"heart_rate": heart_rate,
                            "status": status,
                            "timestamp": timestamp}
             return status_dict
     return "Patient not found"
+
+
+def verify_attendant_exists(attending_username):
+    for attendant in attendant_db:
+        if attendant["attending_username"] == attending_username:
+            return True
+    return "The physician does not exist in database"
+
+
+def get_patient_id_list(attending_username):
+    for attendant in attendant_db:
+        if attendant["attending_username"] == attending_username:
+            return attendant["patients"]
+
+
+def patients_for_attending_username(patient_id_list):
+    patients_list = list()
+    for patient in patient_db:
+        if patient["patient_id"] in patient_id_list:
+            last_heart_rate = patient["heart_rate"]
+            if len(last_heart_rate) == 1:
+                last_heart_rate = last_heart_rate[0]
+            else:
+                last_heart_rate = last_heart_rate[-1]
+            last_time = patient["timestamp"]
+            if len(last_time) == 1:
+                last_time = last_time[0]
+            else:
+                last_time = last_time[-1]
+            temp_dict = {"patient_id": patient["patient_id"],
+                         "last_heart_rate": last_heart_rate,
+                         "last_time": last_time,
+                         "status": patient["status"]}
+            patients_list.append(temp_dict)
+    return patients_list
 
 
 # Put all of the route functions below this line
@@ -286,6 +327,15 @@ def post_interval_average():
     answer = sum(patient["heart_rate"]
                  [index:]) / len(patient["heart_rate"][index:])
     return jsonify(answer)
+
+
+@app.route("/api/patients/<attending_username>", methods=["GET"])
+def get_patients_for_attending_username(attending_username):
+    verify_attendant = verify_attendant_exists(attending_username)
+    if verify_attendant is not True:
+        return verify_attendant, 400
+    patient_id_list = get_patient_id_list(attending_username)
+    return jsonify(patients_for_attending_username(patient_id_list))
 
 
 if __name__ == '__main__':

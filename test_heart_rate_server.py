@@ -337,6 +337,7 @@ def test_get_patient_status(patient_id, db, expected):
     for patient in db:
         patient_db.append(patient)
     answer = get_patient_status(patient_id)
+    assert answer == expected
 
 
 @pytest.mark.parametrize("time, times, expected",
@@ -358,4 +359,105 @@ def test_get_patient_status(patient_id, db, expected):
 def test_find_first_time(time, times, expected):
     from heart_rate_server import find_first_time
     answer = find_first_time(time, times)
+    assert answer == expected
+
+
+@pytest.mark.parametrize("attending_username, db, expected",
+                         [("Canyon.D",
+                           [{"attending_username": "Aidan.T",
+                             "attending_email": "aidan@duke.edu",
+                             "attending_phone": "919-200-8973",
+                             "patients": [500, 501]},
+                            {"attending_username": "Canyon.D",
+                             "attending_email": "canyon@duke.edu",
+                             "attending_phone": "919-200-8973",
+                             "patients": [502]},
+                            {"attending_username": "Bob.D",
+                                "attending_email": "robert@duke.edu",
+                                "attending_phone": "919-200-8973",
+                                "patients": [503, 504, 505]},
+                            {"attending_username": "Zion.W",
+                                "attending_email": "Zion@duke.edu",
+                                "attending_phone": "919-200-8973",
+                                "patients": []}], True),
+                          ("Max.G", [],
+                           "The physician does not exist in database")])
+def test_verify_attendant_exists(attending_username, db, expected):
+    from heart_rate_server import verify_attendant_exists, attendant_db
+    for attendant in db:
+        attendant_db.append(attendant)
+    answer = verify_attendant_exists(attending_username)
+    assert answer == expected
+
+
+@pytest.mark.parametrize("attending_username, db, expected",
+                         [("Bob.D",
+                          [{"attending_username": "Aidan.T",
+                            "attending_email": "aidan@duke.edu",
+                            "attending_phone": "919-200-8973",
+                            "patients": [500, 501]},
+                           {"attending_username": "Canyon.D",
+                            "attending_email": "canyon@duke.edu",
+                            "attending_phone": "919-200-8973",
+                            "patients": [502]},
+                           {"attending_username": "Bob.D",
+                            "attending_email": "robert@duke.edu",
+                            "attending_phone": "919-200-8973",
+                            "patients": [503, 504, 505]},
+                           {"attending_username": "Zion.W",
+                            "attending_email": "Zion@duke.edu",
+                            "attending_phone": "919-200-8973",
+                            "patients": []}], [503, 504, 505]),
+                          ("Zion.W", [], [])])
+def test_get_patient_id_list(attending_username, db, expected):
+    from heart_rate_server import get_patient_id_list, attendant_db
+    for attendant in db:
+        attendant_db.append(attendant)
+    answer = get_patient_id_list(attending_username)
+    assert answer == expected
+
+
+@pytest.mark.parametrize("patient_id_list, pat_db, expected",
+                         [([602, 603],
+                          [{"patient_id": 601,
+                            "attending_username": 'Therien.A',
+                            "patient_age": 21,
+                            "heart_rate": [70, 65],
+                            "timestamp": ['2020-03-09 11:00:36',
+                                          '2020-03-10 11:00:36'],
+                            "status": "not tachycardic"},
+                           {"patient_id": 602,
+                            "attending_username": 'Duncan.C',
+                            "patient_age": 21,
+                            "heart_rate": [60, 150],
+                            "timestamp": ['2020-03-09 11:00:36',
+                                          '2020-03-10 11:02:36'],
+                            "status": "tachycardic"},
+                           {"patient_id": 603,
+                            "attending_username": 'Bob.D',
+                            "patient_age": 40,
+                            "heart_rate": [90, 80],
+                            "timestamp": ['2020-03-09 11:00:36',
+                                          '2020-03-10 11:01:36'],
+                            "status": "not tachycardic"},
+                           {"patient_id": 604,
+                            "attending_username": 'Williamson.Z',
+                            "patient_age": 19,
+                            "heart_rate": [70, 105],
+                            "timestamp": ['2020-03-09 11:00:36',
+                                          '2020-03-10 11:00:36'],
+                            "status": "tachycardic"}],
+                          [{"last_heart_rate": 150,
+                            "last_time": "2020-03-10 11:02:36",
+                            "patient_id": 602,
+                            "status":  "tachycardic"},
+                           {"last_heart_rate": 80,
+                            "last_time": "2020-03-10 11:01:36",
+                            "patient_id": 603,
+                            "status": "not tachycardic"}])])
+def test_patients_for_attending_username(patient_id_list, pat_db, expected):
+    from heart_rate_server import patient_db, patients_for_attending_username
+    for patient in pat_db:
+        patient_db.append(patient)
+    answer = patients_for_attending_username(patient_id_list)
     assert answer == expected
