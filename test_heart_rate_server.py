@@ -559,3 +559,21 @@ def test_verify_new_attending(in_dict, expected):
     from heart_rate_server import verify_new_attending
     answer = verify_new_attending(in_dict)
     assert answer == expected
+
+
+@pytest.mark.parametrize("in_dict, expected",
+                         [({"patient_id": 1,
+                            "heart_rate_average_since":
+                                "2018-03-09 11:00:36"}, True),
+                          ({"patient_id": '1',
+                            "heart_rate_average_since":
+                                "2018-03-09 11:00:36"}, True),
+                          ({"patientid": 1,
+                            "heart_rate_average_since":
+                                "2018-03-09 11:00:36"},
+                           "patient_id key not found in input")
+                          ])
+def test_verify_internal_average(in_dict, expected):
+    from heart_rate_server import verify_internal_average
+    answer = verify_internal_average(in_dict)
+    assert answer == expected
