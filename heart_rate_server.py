@@ -179,7 +179,16 @@ def check_heart_rate(hr_info, timestamp):
 
 
 def get_patient_status(patient_id):
-    return
+    for patient in patient_db:
+        if patient["patient_id"] == patient_id:
+            heart_rate = patient['heart_rate']
+            status = patient['status']
+            timestamp = patient['timestamp']
+            status_dict = {"heart_rate": heart_rate[-1],
+                           "status": status,
+                           "timestamp": timestamp[-1]}
+            return status_dict
+    return "Patient not found"
 
 
 # Put all of the route functions below this line

@@ -269,7 +269,7 @@ def test_find_physician_email(patient_id, db, expected):
                                 "attending_username": 'Bob.D',
                                 "patient_age": 40,
                                 "heart_rate": [90, 80],
-                                "timestamp": ['2020-03-09 11:00:36', '2020-03-10 11:00:36'],
+                                "timestamp": ['2020-03-09 11:00:36', '2020-03-10 11:01:36'],
                                 "status": "not tachycardic"},
                                {"patient_id": 4,
                                 "attending_username": 'Williamson.Z',
