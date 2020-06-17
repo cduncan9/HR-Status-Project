@@ -10,6 +10,17 @@ app = Flask(__name__)
 
 
 def is_tachycardic(age, hr):
+    '''determines based on age if heart rate is tachycardic
+
+    Tachycardia is a heart condition in which the heart beats abnormally
+    fast. The conditions for diagnosing tachycardia that were employed in
+    this function were taken from "https://en.wikipedia.org/wiki/Tachycardia"
+
+    :param age: int containing patient's age
+    :param hr: int containin patient's heart rate
+
+    :return: True if tachycardic and False if not tachycardic
+    '''
     if 1 <= age <= 2 and hr > 151:
         return True
     elif 3 < age <= 4 and hr > 137:
@@ -27,6 +38,18 @@ def is_tachycardic(age, hr):
 
 
 def check_bad_input(input):
+    '''checks if input contains non-numeric characters
+
+    Patient IDs can be input in strings or integers. If the
+    type of the input is not a string, we know it is an integer
+    and a valid patient ID. If it is a string we need to check if
+    it contains any non-numeric characters which is done with
+    .isdigit()
+
+    :param input: str or in containing Patient ID
+
+    :return: True if input is bad, False if input is good
+    '''
     if type(input) == str:
         if not input.isdigit():
             return True
@@ -34,6 +57,18 @@ def check_bad_input(input):
 
 
 def read_attending(in_dict):
+    '''Reads in attendant information from input dictionary
+
+    The attendant information is input in a dictionary in the following
+    format:
+    {"attending_username": "Smith.J",
+     "attending_email": "dr_user_id@yourdomain.com",
+     "attending_phone": "919-867-5309}
+    This function extracts each value from the dictionary
+
+    :param in_dict: Dictionary containing attendant info
+    :return: list containing attendant info
+    '''
     user = in_dict["attending_username"]
     email = in_dict["attending_email"]
     phone = in_dict["attending_phone"]
@@ -41,6 +76,18 @@ def read_attending(in_dict):
 
 
 def read_patient(in_dict):
+    '''Reads in patient information from input dictionary
+
+    The attendant information is input in a dictionary in the following
+    format:
+    {"patient_id": 1, # usually this would be the patient MRN
+     "attending_username": "Smith.J",
+     "patient_age": 50, # in years}
+    This function extracts each value from the dictionary
+
+    :param in_dict: dictionary containing patient info
+    :return: list containing patient info
+    '''
     patient = in_dict["patient_id"]
     user = in_dict["attending_username"]
     age = in_dict["patient_age"]
@@ -52,6 +99,14 @@ def read_patient(in_dict):
 
 
 def add_patient_to_db(info):
+    '''Creates a patient dictionary and adds it to database
+
+    Patient info is input as a list and dictionary is created
+    containing all the required keys specified on GitHub which
+    is then added to the global patient database variable
+
+    :param info: list containing patient info
+    '''
     new_patient_dict = {"patient_id": info[0], "attending_username": info[1],
                         "patient_age": info[2], "heart_rate": list(),
                         "timestamp": list(), "status": ""}
@@ -59,6 +114,15 @@ def add_patient_to_db(info):
 
 
 def add_attendant_to_db(info, db):
+    '''Creates an attendant dictionary and adds it to database
+
+    Attendant info is input as a list and dictionary is created
+    containing all the required keys specified on GitHub which
+    is then added to the global attendant database variable
+
+    :param info: list containing attendant info
+    :param db: list containing attendant dictionaries
+    '''
     new_attendant_dict = {"attending_username": info[0],
                           "attending_email": info[1],
                           "attending_phone": info[2],
@@ -68,6 +132,17 @@ def add_attendant_to_db(info, db):
 
 
 def add_patient_to_attendant_db(info, db):
+    '''Adds patient ID to corresponding attendant's list of patients
+
+    This method looks through the list of attendant dictionaries for
+    the input patient's attendant. If the attendant is found the patient's
+    ID is appended to the attendant's list of patients.
+
+    :param info: list of patient info
+    :param db: list of attendant dictionaries
+    :return: False if patient's attendant is found, True if patients's
+             attendant not found
+    '''
     patient_id = info[0]
     attendant_name = info[1]
     for attendant in db:
@@ -78,6 +153,17 @@ def add_patient_to_attendant_db(info, db):
 
 
 def find_first_time(time_input, data):
+    '''Finds first time in list of timestamps equal to or after input timestamp
+
+    This method is used for the interval average route. The first index of the
+    heart rate data list that occurs at or after the input timestamp
+    must be found. This function finds that index.
+
+    :param time_input: datetime object containing input timestamp
+    :param data: list of patient heart rate timestamps
+
+    :return: int containing first index of interval
+    '''
     ref_time = datetime.strptime(time_input, "%Y-%m-%d %H:%M:%S")
     count = 0
     for time in data:
@@ -92,6 +178,16 @@ def find_first_time(time_input, data):
 
 
 def get_patient_heart_rates(patient_id, db):
+    '''Returns list of patient heart rate data
+
+    This method takes in the patient ID and patient database and
+    outputs the list of the specified patient's heart rate data.
+
+    :param patient_id: int containing patient ID
+    :param db: list of patient dictionaries
+    :return: list of patient heart rate data, str "Patient not found" and
+             error 400 if not found
+    '''
     for patient in db:
         if patient_id == str(patient["patient_id"]):
             return patient["heart_rate"]
@@ -99,6 +195,16 @@ def get_patient_heart_rates(patient_id, db):
 
 
 def find_patient(patient_id, db):
+    '''Returns specified patient dictionary
+
+    This method takes in the patient ID and patient database and
+    outputs the dictionary containing the specified patient's info.
+
+    :param patient_id: int containing patient ID
+    :param db: list of patient dictionaries
+    :return: dictionary of patient data, str "Patient not found" and
+             error 400 if patient not found
+    '''
     for patient in db:
         if patient["patient_id"] == patient_id:
             return patient
@@ -106,6 +212,16 @@ def find_patient(patient_id, db):
 
 
 def get_patient_average_heart_rate(patient_id, db):
+    '''Returns the average of the patient's heart rate data
+
+    This method takes in the patient ID and patient database and
+    outputs the specified patient's average heart rate.
+
+    :param patient_id: int containing patient ID
+    :param db: list of patient dictionaries
+    :return: int containing patient's average heart rate data,
+             str "Patient not found" and error 400 if not found
+    '''
     data = get_patient_heart_rates(patient_id, db)
     if type(data) is not list:
         return "Patient not found", 400
@@ -114,6 +230,14 @@ def get_patient_average_heart_rate(patient_id, db):
 
 
 def read_heart_rate_info(in_dict):
+    '''Reads in patient ID and heart rate
+
+    A patient dictionary is input into this function and the
+    patient id and heart rate data are output in a list
+
+    :param in_dict: dictionary containing patient data
+    :return: list containing patient ID and list of heart rates
+    '''
     patient_id = in_dict['patient_id']
     heart_rate = in_dict['heart_rate']
     if type(patient_id) == str:
@@ -124,6 +248,17 @@ def read_heart_rate_info(in_dict):
 
 
 def add_heart_rate_to_patient_db(hr_info, timestamp):
+    '''Adds patient heart rate to database
+
+    Takes in patient heart rate info and timestamp and adds
+    heart rate data and timestamp to patient's dictionary
+
+    :param hr_info: list containing patient ID and heart rate data point
+    :param timestamp: str containing timestamp following format on GitHub
+
+    :return: True if patient found and info added,
+             str "Error in adding hear rate info to database" otherwise
+    '''
     pat_id = hr_info[0]
     pat_hr = hr_info[1]
     global patient_db
@@ -136,12 +271,23 @@ def add_heart_rate_to_patient_db(hr_info, timestamp):
 
 
 def current_time(time_input):
+    '''Turns input datetime object into a string
+
+    :param time_input: datetime object
+    :return: str of datetime object
+    '''
     # How can we test this
     time_string = datetime.strftime(time_input, "%Y-%m-%d %H:%M:%S")
     return time_string
 
 
 def find_physician_email(patient_id):
+    '''Finds patient's physician email
+
+    :param patient_id: int containing patient ID
+    :return: str containing attendant email if attendant found,
+             False otherwise
+    '''
     for attendant in attendant_db:
         if patient_id in attendant["patients"]:
             return attendant["attending_email"]
@@ -149,6 +295,17 @@ def find_physician_email(patient_id):
 
 
 def send_email(hr_info, timestamp):
+    '''Sends email using server to attendant if patient is tachycardic
+
+    If a tachycardic event occurs to a patient, this method creates and
+    sends an email to that patient's attendant saying they have tachycardia.
+
+    :param hr_info: list containing patient ID and heart rate data point
+    :param timestamp: str containing timestamp
+
+    :return: str containing email text if email sent,
+             str "Physician not in database" error 400 otherwise
+    '''
     # this email will make the POST request to email the physician
     server = "http://vcm-7631.vm.duke.edu:5007/hrss/send_email"
     email_content = ("Your patient with the patient_id number {} "
@@ -168,6 +325,17 @@ def send_email(hr_info, timestamp):
 
 
 def check_heart_rate(hr_info, timestamp):
+    '''Checks heart rate and sends email if tachycardic
+
+    Checks heart rate for tachyrcardia by callin is_tachycardic function
+    and send email by calling send_email function.
+
+    :param hr_info: list containing int patient ID and
+                    int heart rate data point
+    :param timestamp: str containing timestamp
+    :return: str of email text if email sent,
+             True otherwise
+    '''
     age = 1
     for patient in patient_db:
         if patient['patient_id'] == hr_info[0]:
@@ -183,6 +351,16 @@ def check_heart_rate(hr_info, timestamp):
 
 
 def get_patient_status(patient_id):
+    '''Outputs dictionary containing patient status
+
+    This function takes in a patinent ID, finds them in the patient
+    database, and builds a containing the status information which
+    is then output.
+
+    :param patient_id: int containing patient ID
+    :return: dictionary of patient status if patient found,
+             str "Patient not found" if patient not found
+    '''
     patient_id = int(patient_id)
     for patient in patient_db:
         if patient["patient_id"] == patient_id:
@@ -205,12 +383,30 @@ def get_patient_status(patient_id):
 
 
 def get_patient_id_list(attending_username):
+    '''Returns attendant's list of patients
+
+    :param attending_username: str containing attendant username
+    :return: list of ints containing patient IDs
+    '''
     for attendant in attendant_db:
         if attendant["attending_username"] == attending_username:
             return attendant["patients"]
 
 
 def patients_for_attending_username(patient_id_list):
+    '''Takes in list of patients and builds a list of dictionaries
+
+    Builds list of dictionaries of the following format:
+    {"patient_id": patient["patient_id"],
+     "last_heart_rate": last_heart_rate,
+     "last_time": last_time,
+     "status": patient["status"]}
+     from an input list of integers containing patient IDs
+
+    :param patient_id_list: list of ints containing patient IDs
+    :return: list of dictionaries containing patient info
+             in the above format
+    '''
     patients_list = list()
     for patient in patient_db:
         if patient["patient_id"] in patient_id_list:
