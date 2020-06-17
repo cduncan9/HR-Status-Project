@@ -325,6 +325,16 @@ def send_email(hr_info, timestamp):
 
 
 def check_heart_rate(hr_info, timestamp):
+    '''Checks heart rate and sends email if tachycardic
+
+    Checks heart rate for tachyrcardia by callin is_tachycardic function
+    and send email by calling send_email function.
+
+    :param hr_info: list containing int patient ID and int heart rate data point
+    :param timestamp: str containing timestamp
+    :return: str of email text if email sent,
+             True otherwise
+    '''
     age = 1
     for patient in patient_db:
         if patient['patient_id'] == hr_info[0]:
@@ -340,6 +350,11 @@ def check_heart_rate(hr_info, timestamp):
 
 
 def get_patient_status(patient_id):
+    '''
+    
+    :param patient_id:
+    :return:
+    '''
     patient_id = int(patient_id)
     for patient in patient_db:
         if patient["patient_id"] == patient_id:
