@@ -193,7 +193,7 @@ def test_add_heart_rate_to_patient_db(hr_info, timestamp, db, expected):
                              "attending_phone": "919-200-8973",
                              "patients": [20]}], True),
                           ([20, 200], '2018-03-09 11:00:36',
-                           [{"patient_id": 2, "attending_username": 'Duncan.C',
+                           [{"patient_id": 20, "attending_username": 'Duncan.C',
                              "patient_age": 21, "heart_rate": list(),
                              "timestamp": list(), "status": ""}],
                            [{"attending_username": "Canyon.D",
@@ -201,7 +201,17 @@ def test_add_heart_rate_to_patient_db(hr_info, timestamp, db, expected):
                              "attending_phone": "919-200-8973",
                              "patients": [20]}],
                              'E-mail sent to canyon@duke.edu'
-                             ' from warning@hrsentinalserver.com')
+                             ' from warning@hrsentinalserver.com'),
+                          ([201, 200], '2018-03-09 11:00:36',
+                           [{"patient_id": 201,
+                             "attending_username": 'Duncan.C',
+                             "patient_age": 21, "heart_rate": list(),
+                             "timestamp": list(), "status": ""}],
+                           [{"attending_username": "Canyon.D",
+                             "attending_email": "",
+                             "attending_phone": "919-200-8973",
+                             "patients": [201]}],
+                             "'to_email' is not a correct e-mail address")
                           ])
 def test_check_heart_rate(hr_info, timestamp, pat_db, att_db, expected):
     from heart_rate_server import check_heart_rate, patient_db, attendant_db
