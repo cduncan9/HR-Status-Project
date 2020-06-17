@@ -255,7 +255,9 @@ def get_interval_average():
     time = in_dict["heart_rate_average_since"]
     patient = find_patient(patient_id)
     index = find_first_time(time, patient["timestamp"])
-    return jsonify(sum(patient["heart_rate"][index:]) / len(patient["heart_rate"][index:]))
+    answer = sum(patient["heart_rate"]
+                 [index:]) / len(patient["heart_rate"][index:])
+    return jsonify(answer)
 
 
 if __name__ == '__main__':
