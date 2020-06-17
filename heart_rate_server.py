@@ -195,10 +195,10 @@ def check_heart_rate(hr_info, timestamp, patient):
             patient["status"] = "not tachycardic"
     if is_tachycardic(age, hr_info[1]):
         logging.info("Tachycardic Heart Beat Detected..."
-                     + "Patient ID: " + hr_info[0] + ", "
-                     + "Heart Rate: " + hr_info[1] + ", "
+                     + "Patient ID: " + str(hr_info[0]) + ", "
+                     + "Heart Rate: " + str(hr_info[1]) + ", "
                      + "Attending Physician: "
-                     + patient["attending_physician"] + "\n")
+                     + patient["attending_username"] + "\n")
         message_sent = send_email(hr_info, timestamp)
         for patient in patient_db:
             if patient['patient_id'] == hr_info[0]:
