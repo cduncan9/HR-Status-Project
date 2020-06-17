@@ -344,7 +344,7 @@ def test_find_physician_email(patient_id, db, expected):
                                    "status": "tachycardic"}],
                            {"heart_rate": 80, "status": "not tachycardic",
                             "timestamp": '2020-03-10 11:01:36'}
-                           )])
+                           ), (1019, [], "Patient not found")])
 def test_get_patient_status(patient_id, db, expected):
     from heart_rate_server import patient_db, get_patient_status
     for patient in db:
