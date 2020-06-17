@@ -468,7 +468,8 @@ def test_get_patient_id_list(attending_username, db, expected):
                            {"last_heart_rate": 80,
                             "last_time": "2020-03-10 11:01:36",
                             "patient_id": 603,
-                            "status": "not tachycardic"}])])
+                            "status": "not tachycardic"}]),
+                          ([], [], [])])
 def test_patients_for_attending_username(patient_id_list, pat_db, expected):
     from heart_rate_server import patient_db, patients_for_attending_username
     for patient in pat_db:
