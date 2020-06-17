@@ -1,6 +1,10 @@
 # heart-rate-sentinel-server-duncan-therien
 heart-rate-sentinel-server-duncan-therien created by GitHub Classroom
 
+The Heart Rate Sentinel Projects is comprised of three python files: heart_rate_server.py, heart_rate_client.py,
+and test_heart_rate_server.py. The heart_rate_server.py runs a server using Flask and has routes following the 
+specifications on the GitHub assignment page. These routes include "POST /api/new_patient" (adds a patient to database), "POST /api/new_attending" (adds a new attending physician to database), "POST /api/heart_rate" (logs a heart rate data point to a specified patient and emails physician if heart rate is tachycardic), "GET /api/status/<patient_id>" (returns patient status), "GET /api/heart_rate/<patient_id>" (returns list of previous heart rate measurements), "GET /api/heart_rate/average/<patient_id>" (returns list of patients heart rate readings), "POST /api/heart_rate/interval_average" (returns average heart rate after input timestamp), and "GET /api/patients/<attending_username>" (returns all patient info assigned to given attendant). A more in depth description of route functionality may be found on the GitHub assignment page. The file heart_rate_client.py is a python file that interacts with the server to demonstrate the server's functionality. The file test_hear_rate_server.py contains all the unit testing for helper methods contained in heart_rate_server.py.
+
 
 # Git Status Badge
 
@@ -10,7 +14,7 @@ heart-rate-sentinel-server-duncan-therien created by GitHub Classroom
 
 MIT License
 
-Copyright (c) [year] [fullname]
+Copyright (c) [2020] [Aidan Therien, Canyon Duncan]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
