@@ -156,8 +156,8 @@ def find_first_time(time_input, data):
     '''Finds first time in list of timestamps equal to or after input timestamp
 
     This method is used for the interval average route. The first index of the
-    heart rate data list that occurs at or after the input timestamp must be found.
-    This function finds that index.
+    heart rate data list that occurs at or after the input timestamp
+    must be found. This function finds that index.
 
     :param time_input: datetime object containing input timestamp
     :param data: list of patient heart rate timestamps
@@ -185,8 +185,8 @@ def get_patient_heart_rates(patient_id, db):
 
     :param patient_id: int containing patient ID
     :param db: list of patient dictionaries
-    :return: list of patient heart rate data, str "Patient not found" and error 400
-             if not found
+    :return: list of patient heart rate data, str "Patient not found" and
+             error 400 if not found
     '''
     for patient in db:
         if patient_id == str(patient["patient_id"]):
@@ -297,8 +297,8 @@ def find_physician_email(patient_id):
 def send_email(hr_info, timestamp):
     '''Sends email using server to attendant if patient is tachycardic
 
-    If a tachycardic event occurs to a patient, this method creates and sends an
-    email to that patient's attendant saying they have tachycardia.
+    If a tachycardic event occurs to a patient, this method creates and
+    sends an email to that patient's attendant saying they have tachycardia.
 
     :param hr_info: list containing patient ID and heart rate data point
     :param timestamp: str containing timestamp
@@ -330,7 +330,8 @@ def check_heart_rate(hr_info, timestamp):
     Checks heart rate for tachyrcardia by callin is_tachycardic function
     and send email by calling send_email function.
 
-    :param hr_info: list containing int patient ID and int heart rate data point
+    :param hr_info: list containing int patient ID and
+                    int heart rate data point
     :param timestamp: str containing timestamp
     :return: str of email text if email sent,
              True otherwise
