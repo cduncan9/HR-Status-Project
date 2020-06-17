@@ -565,7 +565,8 @@ def post_interval_average():
 @app.route("/api/patients/<attending_username>", methods=["GET"])
 def get_patients_for_attending_username(attending_username):
     """
-    This function returns a list of patient information for a specific physician
+    This function returns a list of patient information for a
+    specific physician
 
     This function is for a GET request and receives an attending_username
     as part of a variable URL. This function first checks to see if the
