@@ -275,6 +275,38 @@ def test_find_patient(patient_id, db, expected):
     assert answer == expected
 
 
+@pytest.mark.parametrize("patient_id, db, expected",
+                         [('106', [{"patient_id": 106,
+                                    "attending_username": 'Therien.A',
+                                    "patient_age": 21, "heart_rate": [120, 100],
+                                    "timestamp": list(), "status": ""},
+                                   {"patient_id": 107,
+                                    "attending_username": 'Therien.A',
+                                    "patient_age": 21, "heart_rate": [100, 120, 140],
+                                    "timestamp": list(), "status": ""}], 110),
+                          ('107', [{"patient_id": 106,
+                                    "attending_username": 'Therien.A',
+                                    "patient_age": 21, "heart_rate": [120, 100],
+                                    "timestamp": list(), "status": ""},
+                                   {"patient_id": 107,
+                                    "attending_username": 'Therien.A',
+                                    "patient_age": 21, "heart_rate": [100, 120, 140],
+                                    "timestamp": list(), "status": ""}], 120),
+                          ('108', [{"patient_id": 106,
+                                    "attending_username": 'Therien.A',
+                                    "patient_age": 21, "heart_rate": [120, 100],
+                                    "timestamp": list(), "status": ""},
+                                   {"patient_id": 107,
+                                    "attending_username": 'Therien.A',
+                                    "patient_age": 21, "heart_rate": [100, 120, 140],
+                                    "timestamp": list(), "status": ""}],
+                           ('Patient not found', 400))])
+def test_get_patient_average_heart_rate(patient_id, db, expected):
+    from heart_rate_server import get_patient_average_heart_rate
+    answer = get_patient_average_heart_rate(patient_id, db)
+    assert answer == expected
+
+
 def test_current_time():
     from heart_rate_server import current_time
     time_input = datetime(2018, 3, 9, 11, 0, 36)
