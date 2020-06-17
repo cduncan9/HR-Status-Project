@@ -5,3 +5,4 @@ requests
 pymodm
 numpy
 datetime
+sphinx
