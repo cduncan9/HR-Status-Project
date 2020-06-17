@@ -187,18 +187,13 @@ def send_email(hr_info, timestamp):
     return r.text
 
 
-def check_heart_rate(hr_info, timestamp, patient):
+def check_heart_rate(hr_info, timestamp):
     age = 1
     for patient in patient_db:
         if patient['patient_id'] == hr_info[0]:
             age = patient['patient_age']
             patient["status"] = "not tachycardic"
     if is_tachycardic(age, hr_info[1]):
-        logging.info("Tachycardic Heart Beat Detected..."
-                     + "Patient ID: " + str(hr_info[0]) + ", "
-                     + "Heart Rate: " + str(hr_info[1]) + ", "
-                     + "Attending Physician: "
-                     + patient["attending_username"] + "\n")
         message_sent = send_email(hr_info, timestamp)
         for patient in patient_db:
             if patient['patient_id'] == hr_info[0]:
@@ -277,8 +272,8 @@ def post_new_patient():
     if flag:
         return "Attendant does not exist", 400
     print(patient_db)
-    logging.info("New patient added... " + "Patient ID: "
-                 + str(in_dict["patient_id"]) + "\n")
+    logging.info("New patient added... " + "Patient ID: " +
+                 str(in_dict["patient_id"]) + "\n")
     return "Patient information stored", 200
 
 
@@ -286,9 +281,9 @@ def post_new_patient():
 def post_new_attending():
     in_dict = request.get_json()
     print(add_attendant_to_db(read_attending(in_dict), attendant_db))
-    logging.info("New attendant added... Username: "
-                 + in_dict["attending_username"] + ", email: "
-                 + in_dict["attending_email"] + "\n")
+    logging.info("New attendant added... Username: " +
+                 in_dict["attending_username"] + ", email: " +
+                 in_dict["attending_email"] + "\n")
     return "Attendant information stored", 200
 
 
@@ -304,9 +299,14 @@ def post_heart_rate():
                                                   timestamp)
     if add_heart_rate is not True:
         return add_heart_rate, 400
-    check_tachycardic = check_heart_rate(hr_info, timestamp,
-                                         find_patient(hr_info[0], patient_db))
+    check_tachycardic = check_heart_rate(hr_info, timestamp)
     if check_tachycardic is not True:
+        patient = find_patient(hr_info[0], patient_db)
+        logging.info("Tachycardic Heart Beat Detected..." +
+                     "Patient ID: " + str(hr_info[0]) + ", " +
+                     "Heart Rate: " + str(hr_info[1]) + ", " +
+                     "Attending Physician: " +
+                     patient["attending_username"] + "\n")
         return check_tachycardic, 200
     print(patient_db)
     return "Heart rate information is stored", 200
