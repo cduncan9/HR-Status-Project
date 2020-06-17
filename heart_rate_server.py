@@ -104,7 +104,7 @@ def find_first_time(time_input, data):
     for time in data:
         temp = datetime.strptime(time, "%Y-%m-%d %H:%M:%S")
         delta = ref_time-temp
-        if delta.total_seconds >= 0:
+        if delta.total_seconds() <= 0:
             return count
         elif count == len(data):
             return "Time out of bounds"
