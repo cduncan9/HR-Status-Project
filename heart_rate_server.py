@@ -288,15 +288,34 @@ def verify_new_patient_info(in_dict):
 # Put all of the route functions below this line
 @app.route("/api/new_patient", methods=["POST"])
 def post_new_patient():
+    """This function stores a new patient's information in patient_db
+
+    This function receives a POST request from a client that has
+    a dictionary containing patient information. The dictionary
+    includes the patient_id, attending_username, and patient_age.
+    This function first verifies that the dictionary sent has
+    the correct key names and value types. If the input data
+    is not correct, then an error string and a status code of 400
+    is returned to the client. Then the function attempts to send
+    the patient_id to be stored in their attending physician's
+    database. If their is no attending physician with the code
+    given in the input dictionary then the function will return
+    the proper error message and the status code of 400. If the
+    patient is  successfully added to the patient_db and
+    attendant_db then a status code of 200 is returned.
+
+    :return: A string saying whether the patient was added or if
+    there was an error and a corresponding status code
+    """
     in_dict = request.get_json()
     verify_input = verify_new_patient_info(in_dict)
     if verify_input is not True:
         return verify_input, 400
     patient_info = read_patient(in_dict)
-    add_patient_to_db(patient_info)
     flag = add_patient_to_attendant_db(patient_info, attendant_db)
     if flag:
         return "Attendant does not exist", 400
+    add_patient_to_db(patient_info)
     print(patient_db)
     logging.info("New patient added... " + "Patient ID: " +
                  str(in_dict["patient_id"]) + "\n")
@@ -305,6 +324,25 @@ def post_new_patient():
 
 @app.route("/api/new_attending", methods=["POST"])
 def post_new_attending():
+    """
+    This function stores the physician information
+
+    This function receives a POST request from a client that has
+    a dictionary containing attending physician information.
+    The dictionary includes the attending_username,
+    attending_email, and attending_phone.
+    This function first verifies that the dictionary sent has
+    the correct key names and value types. If the input data
+    is not correct, then an error string and a status code of 400
+    is returned to the client. Then the function attempts to send
+    the attending physician information to the attending_db. If the
+    patient is  successfully added to the attendant_db then
+    a status code of 200 is returned.
+
+    :return: A string saying whether the attending physician
+     was added or if there was an error and a corresponding
+     status code
+    """
     in_dict = request.get_json()
     verify_input = verify_new_attending(in_dict)
     if verify_input is not True:
@@ -318,6 +356,29 @@ def post_new_attending():
 
 @app.route("/api/heart_rate", methods=["POST"])
 def post_heart_rate():
+    """
+    This function stores a heart rate and timestamp for a patient
+
+    This function receives a dictionary containing a patient_id and
+    a heart_rate. This function first verifies that the dictionary sent has
+    the correct key names and value types. If the input data
+    is not correct, then an error string and a status code of 400
+    is returned to the client. Then this function stores the current
+    time in a datetime object. This function calls the function
+    current_time which converts the datetime object to a string.
+    The heart_rate and timestamp are then added to the database for
+    the dictionary with the corresponding patient_id. If there is no
+    such patient_id then an error is returned. Then this function
+    calls the function check_heart_rate(). If the heart_rate is
+    tachycardic then the function check_heart_rate() will trigger
+    an email being sent to the patient's attending physician, and
+    a string will be returned to the client notifying them of this.
+
+    :return: A string signaling if the heart rate is
+     properly added to the database. If the heart rate is tachycardic,
+     then a string signaling that an email was sent to the physician is
+     returned.
+    """
     in_dict = request.get_json()
     verify_input = verify_heart_rate_post(in_dict)
     if verify_input is not True:
@@ -343,21 +404,67 @@ def post_heart_rate():
 
 @app.route("/api/heart_rate/<patient_id>", methods=["GET"])
 def get_patient_heart_data(patient_id):
+    """
+    This function returns a list of heart rates for a patient.
+
+    This function is for a GET request and receives a patient_id
+    as part of a variable URL. The function gets the list of
+    heart_rate for the corresponding patient_id and sends it to a
+    client in a JSON format.
+
+    :param patient_id: a number corresponding to a patient in patient_db
+    :return: list of heart rates for that patient
+    """
     return jsonify(get_patient_heart_rates(patient_id, patient_db))
 
 
 @app.route("/api/heart_rate/average/<patient_id>", methods=["GET"])
 def get_patient_avg_heart_rate(patient_id):
+    """
+    This function returns the average heart_rate for a patient
+
+    This function is for a GET request and receives a patient_id
+    as part of a variable URL. The function gets the average
+    heart_rate for the corresponding patient_id and sends it to a
+    client in a JSON format.
+    :param patient_id: a number corresponding to a patient in patient_db
+    :return: a float of the average heart_rate for a patient
+    """
     return jsonify(get_patient_average_heart_rate(patient_id, patient_db))
 
 
 @app.route("/api/status/<patient_id>", methods=["GET"])
 def get_status(patient_id):
+    """
+    This function returns the status of a patient
+
+    This function is for a GET request and receives a patient_id
+    as part of a variable URL. The function returns a dictionary
+    containing the most recent heart_rate, timestamp, and the
+    status for the corresponding patient_id and sends it to a
+    client in a JSON format.
+    :param patient_id: a number corresponding to a patient in patient_db
+    :return: a dictionary containing the most recent heart_rate,
+    timestamp, and the status
+    """
     return jsonify(get_patient_status(patient_id))
 
 
 @app.route("/api/heart_rate/interval_average", methods=["POST"])
 def post_interval_average():
+    """
+    This function returns the average heart rate for a patient_id
+    from a specific time
+
+    This function receives a POST request containing the keys
+    patient_id, and heart_rate_average_since. This function
+    first verifies that the keys and values are correct, and
+    returns an error string if not. Then this function calls
+    the function find_patient() which returns patient info for
+    the patient_id. The function then finds the average heart_rate
+    for all readings from the time specified by the input dictionary.
+    :return: a float giving the average heart_rate since the time specified
+    """
     in_dict = request.get_json()
     verify_input = verify_internal_average(in_dict)
     if verify_input is not True:
@@ -375,6 +482,21 @@ def post_interval_average():
 
 @app.route("/api/patients/<attending_username>", methods=["GET"])
 def get_patients_for_attending_username(attending_username):
+    """
+    This function returns a list of patient information for a specific physician
+
+    This function is for a GET request and receives an attending_username
+    as part of a variable URL. This function first checks to see if the
+    attending_username is stored in the database. If the
+    attending_username is not in the database then a string is returned
+    notifying the client. Then this function calls a function that gets
+    the list of patient_id for the attending_username. For each
+    patient_id, a dictionary is stored in a list that contains the
+    patient_id, last_heart_rate, last_time, and status. This list
+    of patient dictionaries is then returned to the client.
+    :param attending_username: the username used by a physician
+    :return: a list containing dictionaries of patient information
+    """
     verify_attendant = verify_attendant_exists(attending_username)
     if verify_attendant is not True:
         return verify_attendant, 400
