@@ -26,7 +26,10 @@ The Heart Rate Sentinel Projects is comprised of three python files: heart_rate_
 and test_heart_rate_server.py. The heart_rate_server.py runs a server using Flask and has routes following the 
 specifications on the GitHub assignment page. These routes include `POST /api/new_patient` (adds a patient to database), `OST /api/new_attending` (adds a new attending physician to database), `POST /api/heart_rate` (logs a heart rate data point to a specified patient and emails physician if heart rate is tachycardic), `GET /api/status/<patient_id>` (returns patient status), `GET /api/heart_rate/<patient_id>` (returns list of previous heart rate measurements), `GET /api/heart_rate/average/<patient_id>`(returns list of patients heart rate readings), `POST /api/heart_rate/interval_average` (returns average heart rate after input timestamp), and `GET /api/patients/<attending_username>` (returns all patient info assigned to given attendant). A more in depth description of route functionality may be found on the GitHub assignment page. The file heart_rate_client.py is a python file that interacts with the server to demonstrate the server's functionality. The file test_hear_rate_server.py contains all the unit testing for helper methods contained in heart_rate_server.py.
 
+## Access This Server
+This server is running with the following address:
 
+http://vcm-15217.vm.duke.edu:5000
 ## Git Status Badge
 
 [![Build Status](https://travis-ci.com/BME547-Summer2020/ecg-analysis-aidan-therien.svg?token=6j6N9bHqFuR9ZZmizj44&branch=master)](https://travis-ci.com/BME547-Summer2020/ecg-analysis-aidan-therien)
