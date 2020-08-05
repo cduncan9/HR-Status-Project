@@ -1,5 +1,4 @@
-# Heart Rate Sentinel Server
-heart-rate-sentinel-server-duncan-therien created by GitHub Classroom
+# Heart Rate Status Server
 
 ## About This Program
 This program acts as a centralized heart rate sentinel server which can recieve GET and POST requests from a mock patient heart rate monitor. Data is stored on the server for both patients and their attending physicians. The following data is stored on the server: 
